@@ -7,7 +7,7 @@ class Alarm {
     const alarms = AlarmRepository.findAll()
     res.status(200).json(alarms)
   }
-
+  
   //find by id
   show(req, res) {
     const alarm = AlarmRepository.findById(req.params.id)
