@@ -3,6 +3,10 @@ import AlarmController from "./app/controllers/AlarmController.js"
 
 const router = Router()
 
+router.get("/test", (req, res) => {
+    res.json("foi")
+})
+
 //retorna lista de alarmes
 router.get("/alarm", AlarmController.index)
 
