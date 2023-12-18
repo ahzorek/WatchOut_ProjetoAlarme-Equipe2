@@ -1,34 +1,34 @@
-import Alarm from "../repositories/AlarmRepository.js"
+import AlarmRepository from "../repositories/AlarmRepository.js"
 
 class Alarm {
 
   //list all
   index(req, res) {
-    const alarms = Alarm.findAll()
+    const alarms = AlarmRepository.findAll()
     res.status(200).json(alarms)
   }
-
+  
   //find by id
   show(req, res) {
-    const alarm = Alarm.findById(req.params.id)
+    const alarm = AlarmRepository.findById(req.params.id)
     res.status(200).json(alarm)
   }
 
   //save new
   store(req, res) {
-    Alarm.create({}) // definir objeto aqui
+    AlarmRepository.create({}) // definir objeto aqui
     res.status(201).send("Alarme cadastrado com sucesso")
   }
 
   //update
   update(req, res) {
-    const alarm = Alarm.update(req.params.id, req.body)
+    const alarm = AlarmRepository.update(req.params.id, req.body)
     res.status(200).json(alarm)
   }
 
   //delete
   delete(req, res) {
-    Alarm.delete(req.params.id)
+    AlarmRepository.delete(req.params.id)
     res.status(200).send(`Alarme ${req.params.id} excluído com sucesso!`)
   }
 }
