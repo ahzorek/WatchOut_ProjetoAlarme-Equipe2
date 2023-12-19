@@ -19,6 +19,9 @@ router.get("/current-time", DateTimeController.showTime)
 //retorna uma string com a data de hoje
 router.get("/current-date", DateTimeController.showDate)
 
+//retorna uma string com a mensagem de boas-vindas
+router.get("/welcome-message", DateTimeController.showMessage)
+
 //retorna lista de alarmes
 router.get("/alarm", AlarmController.index)
 

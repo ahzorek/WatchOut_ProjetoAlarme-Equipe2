@@ -6,6 +6,10 @@ class DateTimeRepository {
   getDate(req) {
     return getHoje(req)
   }
+
+  getMessage() {
+    return getMensagem()
+  }
 }
 
 function getHoraCerta() {
@@ -33,9 +37,23 @@ function getHoje(req) {
     day: "numeric",
   }).format(now)
 
-  console.log(typeof (formatedDate))
-
   return formatedDate
+}
+
+function getMensagem() {
+  const user = "Frcn"
+  let horarioCompleto = getHoraCerta()
+  let hora = getHoraCerta().split(':')[0]
+
+  let msg = 'Boa noite'
+
+  if (hora >= 6 && hora < 12) {
+    msg = "Bom dia"
+  } else if (hora >= 12 && hora < 18) {
+    msg = "Boa tarde"
+  }
+
+  return `${msg}, ${user}. agora são ${horarioCompleto}`
 }
 
 export default new DateTimeRepository()
