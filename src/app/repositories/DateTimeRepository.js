@@ -3,8 +3,8 @@ class DateTimeRepository {
     return getHoraCerta()
   }
 
-  getDate() {
-    return getHoje()
+  getDate(req) {
+    return getHoje(req)
   }
 }
 
@@ -21,12 +21,21 @@ function formatTwoDigits(num) {
   return String(num).padStart(2, '0')
 }
 
-function getHoje() {
+function getHoje(req) {
+  const languages = req.headers["accept-language"]
+  const preferedLanguage = languages ? languages.split(',')[0] : 'pt-BR'
   const now = new Date()
 
-  return new Intl.DateTimeFormat('pt-BR', {
-    dateStyle: 'long',
+  const formatedDate = new Intl.DateTimeFormat(preferedLanguage, {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   }).format(now)
+
+  console.log(typeof (formatedDate))
+
+  return formatedDate
 }
 
 export default new DateTimeRepository()
