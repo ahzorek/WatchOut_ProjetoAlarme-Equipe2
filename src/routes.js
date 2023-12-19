@@ -16,6 +16,9 @@ router.get("/weather", WeatherController.show)
 //retorna uma string HH:MM:SS com a hora certa
 router.get("/current-time", DateTimeController.showTime)
 
+//retorna uma string com a data de hoje
+router.get("/current-date", DateTimeController.showDate)
+
 //retorna lista de alarmes
 router.get("/alarm", AlarmController.index)
 
