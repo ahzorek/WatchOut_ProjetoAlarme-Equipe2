@@ -54,7 +54,7 @@ describe('GET /welcome-message', () => {
     const res = await request.get("/welcome-message")
     expect(res.statusCode).toEqual(200)
     expect(res.body).toHaveProperty("mensagem")
-    expect(typeof (res.body.horaCerta)).toEqual("string")
+    expect(typeof (res.body.mensagem)).toEqual("string")
   })
 })
 
