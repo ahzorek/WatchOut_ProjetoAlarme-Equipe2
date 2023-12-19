@@ -15,7 +15,6 @@ describe('GET /current-date', () => {
   test('Deve retornar status 200 e um json com a propriedade "hoje:" e uma String com a data', async () => {
     const res = await request.get("/current-date").set('accepted-language', 'en-GB')
 
-
     expect(res.statusCode).toEqual(200)
     expect(res.body).toHaveProperty("hoje")
     expect(typeof (res.body.hoje)).toEqual("string")
@@ -25,7 +24,6 @@ describe('GET /current-date', () => {
 describe('GET /current-time', () => {
   test('Deve retornar status 200 e um json com a propriedade "horaCerta:" e uma String com o horário', async () => {
     const res = await request.get("/current-time")
-
 
     expect(res.statusCode).toEqual(200)
     expect(res.body).toHaveProperty("horaCerta")
@@ -48,6 +46,15 @@ describe('GET /weather?city=%_cidade_%', () => {
 
     expect(res.body).toEqual('not good my man')
     expect(res.statusCode).toEqual(418)
+  })
+})
+
+describe('GET /welcome-message', () => {
+  test('Deve retornar status 200 e um json com a propriedade "mensagem" e uma String com a mensagem', async () => {
+    const res = await request.get("/welcome-message")
+    expect(res.statusCode).toEqual(200)
+    expect(res.body).toHaveProperty("mensagem")
+    expect(typeof (res.body.horaCerta)).toEqual("string")
   })
 })
 
