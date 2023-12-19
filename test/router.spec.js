@@ -32,3 +32,21 @@ describe('GET /current-time', () => {
     expect(typeof (res.body.horaCerta)).toEqual("string")
   })
 })
+
+describe('GET /weather?city=%_cidade_%', () => {
+  test('Deve retornar status 200 autorizado com uma key valida, propriedade "by: city_name" e um objeto "results"', async () => {
+    const res = await request.get("/weather?city=Florianopolis")
+    expect(res.statusCode).toEqual(200)
+
+    expect(res.body.by).toEqual('city_name')
+    expect(res.body.valid_key).toEqual(true)
+    expect(res.body).toHaveProperty("results")
+  })
+
+  test('Deve retornar status 418 e body "not good my man"', async () => {
+    const res = await request.get("/weather")
+
+    expect(res.body).toEqual('not good my man')
+    expect(res.statusCode).toEqual(418)
+  })
+})
