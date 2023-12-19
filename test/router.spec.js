@@ -50,3 +50,10 @@ describe('GET /weather?city=%_cidade_%', () => {
     expect(res.statusCode).toEqual(418)
   })
 })
+
+describe('GET /public', () => {
+  test('Deve servir arquivos estáticos', async () => {
+    const response = await request.get('/img/test.jpg')
+    expect(response.status).toBe(200)
+  })
+})
