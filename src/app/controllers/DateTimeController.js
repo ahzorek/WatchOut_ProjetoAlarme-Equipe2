@@ -8,7 +8,7 @@ class DateTime {
   }
 
   showDate(req, res) {
-    const currentDate = DateTimeRepository.getDate()
+    const currentDate = DateTimeRepository.getDate(req)
     res.status(200).json({ hoje: currentDate })
   }
 }
