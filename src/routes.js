@@ -1,11 +1,16 @@
 import { Router } from "express"
 import AlarmController from "./app/controllers/AlarmController.js"
+import WeatherController from "./app/controllers/WeatherController.js"
 
 const router = Router()
 
+//rota teste 
 router.get("/test", (req, res) => {
     res.json("foi")
 })
+
+//retorna clima pelo nome da cidade em query param (?city=)
+router.get("/weather", WeatherController.show)
 
 //retorna lista de alarmes
 router.get("/alarm", AlarmController.index)
