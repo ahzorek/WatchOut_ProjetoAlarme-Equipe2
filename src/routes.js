@@ -1,6 +1,7 @@
 import { Router } from "express"
 import AlarmController from "./app/controllers/AlarmController.js"
 import WeatherController from "./app/controllers/WeatherController.js"
+import DateTimeController from "./app/controllers/DateTimeController.js"
 
 const router = Router()
 
@@ -11,6 +12,9 @@ router.get("/test", (req, res) => {
 
 //retorna clima pelo nome da cidade em query param (?city=)
 router.get("/weather", WeatherController.show)
+
+//retorna uma string HH:MM:SS com a hora certa
+router.get("/current-time", DateTimeController.showTime)
 
 //retorna lista de alarmes
 router.get("/alarm", AlarmController.index)
