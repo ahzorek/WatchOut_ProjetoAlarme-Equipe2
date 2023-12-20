@@ -64,3 +64,109 @@ describe('GET /public', () => {
     expect(response.status).toBe(200)
   })
 })
+
+describe('GET /user', () => {
+  test('Deve retornar um array de usuários', async () => {
+    const res = await request.get('/user')
+
+    expect(res.status).toBe(200)
+    expect(typeof (res.body)).toEqual('object')
+    expect(res.body).toHaveProperty('data')
+
+
+  })
+})
+
+describe('GET /user/:id', () => {
+  test('Deve retornar um objeto com um usuário', async () => {
+    const res = await request.get('/user/lzFc5iul')
+
+    expect(res.status).toBe(200)
+    expect(typeof (res.body)).toEqual('object')
+    expect(res.body).toHaveProperty('id')
+    expect(res.body.id).toEqual('lzFc5iul')
+
+  })
+})
+
+describe('DELETE /user/:id', () => {
+  test('Deve deletar o usuário e retornar mensagem de confirmação', async () => {
+    const testUser = 'lzFc5iul'
+    const res = await request.delete(`/user/${testUser}`)
+
+    expect(res.status).toBe(200)
+    expect(typeof (res.body)).toEqual('object')
+    expect(res.body).toHaveProperty('message')
+    expect(res.body.message).toEqual(`user with id ${testUser} successfuly deleted.`)
+
+  })
+})
+
+describe('GET /user/:id', () => {
+  test('Deve retornar 404 e mensagem de usuário não encontrado', async () => {
+    const res = await request.get('/user/lzFc5iul')
+
+    expect(res.status).toBe(404)
+    expect(typeof (res.body)).toEqual('object')
+    expect(res.body).toHaveProperty('message')
+    expect(res.body.message).toEqual('user not found')
+
+  })
+})
+
+describe('POST /user', () => {
+  test('Deve criar um novo usuário e retornar 201', async () => {
+    const newUser = {
+      username: 'novousuario',
+      password: 'senha123',
+      city: 'London',
+      unit: 'celsius',
+      is24Hour: true,
+      title: 'Sir.'
+    }
+
+    const res = await request.post('/user').send(newUser)
+
+    expect(res.status).toBe(201)
+
+    expect(typeof res.body).toEqual('object')
+    expect(res.body).toHaveProperty('message', 'user successfully created')
+
+  })
+})
+
+describe('POST /user', () => {
+  test('Deve falhar em criar um novo usuário e retornar status 418', async () => {
+    const newUser = {
+      username: 'novousuario',
+      password: 'senha123',
+      city: 'London',
+      unit: 'celsius',
+      is24Hour: true,
+      title: 'Sir.'
+    }
+
+    const res = await request.post('/user').send(newUser)
+
+    expect(res.status).toBe(418)
+
+    expect(typeof res.body).toEqual('object')
+    expect(res.body).toHaveProperty('message', 'username already exists')
+
+  })
+})
+
+describe('POST /user', () => {
+  test('Deve falhar em criar um novo usuário e retornar 406', async () => {
+    const newUser = {
+    }
+
+    const res = await request.post('/user').send(newUser)
+
+    expect(res.status).toBe(406)
+
+    expect(typeof res.body).toEqual('object')
+    expect(res.body).toHaveProperty('message', 'missing data, check it again')
+
+  })
+})
