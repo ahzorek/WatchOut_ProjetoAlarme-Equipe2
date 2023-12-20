@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,400;1,700&display=swap');
+
+/* QUEBRANDO EM TELAS MENORES QUE 788PX DE ALTURA! */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    height: 100dvh;
+    background-image: linear-gradient(to left bottom, #D1F5F3, #5FD7F9, #54B3ED);
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(209, 245, 243, 1);
+    width: 95dvw;
+    height: 156px;
+    padding: 28px;
+    border-radius: 13px;
+    color: #54B3ED;
+    font-weight: bold;
+    margin: 55px 0;
+}
+
+.temp, .temp-span {
+    font-size: 48px;
+}
+
+.min-max {
+    font-size: 12px;
+}
+
+.weather-icon {
+    width: 60px;
+    height: 47px;
+}
+
+.time-date-container {
+    color: #f7f7e5;
+}
+
+.time {
+    font-size: 120px;
+    margin-bottom: 8px;
+}
+
+.date {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 75px;
+}
+
+.alarm-container {
+    background-color: #54B3ED;
+    width: 95dvw;
+    height: 35dvh;
+    border-radius: 13px;
+    padding: 28px;
+    font-size: 24px;
+    font-weight: medium;
+    text-align: center;
+}
+
+.message, .alarm-description, .turn-off-btn {
+    color: #D1F5F3;
+    font-size: 24px;
+}
+
+.alarm-description {
+    margin-bottom: 35px;
+}
+
+.alarm-title {
+    font-weight: bold;
+}
+
+.turn-off-btn, .snooze-btn {
+    font-weight: bold;
+    width: 82dvw;
+    height: 60px;
+    margin: auto;
+    border-radius: 13px;
+    border: none;
+}
+
+.turn-off-btn {
+    background-color: #5FD7F9;
+    margin-bottom: 15px;
+}
+
+.snooze-btn {
+    background-color: #AEECF3;
+    color: #54B3ED;
+    font-size: 24px;
+}
+
+/* QUEBRANDO EM TELAS MENORES QUE 788PX DE ALTURA! */
