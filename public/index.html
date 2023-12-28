@@ -1,37 +1,112 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mega Watch Pika</title>
-    <link rel="shortcut icon" href="img/watch.png" type="image/x-icon">
-    <link rel="stylesheet" href="css/style.css">
-    <script defer src="js/main.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watch Out (motherfucker)</title>
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#5FD7F9">
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="shortcut icon" href="img/watch.png" type="image/x-icon">
+  <!-- <script src="https://kit.fontawesome.com/56e30efc82.js" crossorigin="anonymous"></script> -->
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/main.js"></script>
 </head>
+
 <body>
 
-    <header>
+  <div class="app">
+
+    <div class="settings_screen">
+      <h2>Settings</h2>
+    </div>
+    <div class="alarms_screen">
+      <h2>Alarms</h2>
+    </div>
+
+    <div class="dashboard">
+      <!-- box cidade/clima -->
+      <section class="weather-card">
         <div class="weather-info">
-            <p>Weather now</p>  <!-- cidade aqui? -->
-                <span class="temp">22º</span>
-            <p class="min-max">min <span class="min-span">10º</span> max <span class="max-span">25º</span></p>
+          <div class="city-name">Cidade</div>
+          <div class="temp"></div>
+          <span class="weather-tags">
+            <span>
+              min <span class="min-span"></span>
+            </span>
+            <span>
+              max <span class="max-span"></span>
+            </span>
+          </span>
         </div>
+        <img alt="weather icon" class="weather-icon">
+      </section>
 
-        <img src="img/drizzle.png" alt="weather icon" class="weather-icon">
-    </header>
+      <!-- mensagem + relogio (watchface) + data principal -->
+      <main class="time-date-container">
+        <p class="greeting-message title3"></p>
+        <time datetime="" class="time"></time>
+        <p class="date"></p>
+      </main>
 
-    <main class="time-date-container">
-        <h1 class="time">17:58</h1>
-        <p class="date">Fri, Jun 17, 2024</p>
-    </main>
+      <!-- caixa com alarme disparando -->
+      <div class="alarm active" id="alarm-box-active">
+        <h2 class="box-title">Alarm</h2>
+        <div class="message">
+          <p class="alarm-description">It's time for
+            <span class="alarm-title">Yippee Ki Yay, Motherfucker.</span>
+          </p>
+        </div>
+        <div class="btn-wrapper">
+          <button class="btn primary-btn" id="btn-turnOff">Turn Alarm Off</button>
+          <button class="btn snooze-btn" id="btn-snooze">Snooze</button>
+        </div>
+      </div>
 
-    <section class="alarm-container">
-        <p class="message">Good afternoon, Sir. Linus</p>
-        <p class="alarm-description">It's time for <span class="alarm-title">Café da tarde ☕</span></p>
+      <!-- barra menu inferior-->
+      <section class="bottom-container">
+        <!-- navegação -->
+        <nav class="main-navigation">
+          <ul>
+            <li class="btn secondary-btn" id="alarms">
+              <svg class="svg-inline--fa fa-bell" aria-hidden="true" focusable="false" data-prefix="fas"
+                data-icon="bell" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg="">
+                <path fill="currentColor"
+                  d="M224 0c-17.7 0-32 14.3-32 32V51.2C119 66 64 130.6 64 208v18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416H416c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z">
+                </path>
+              </svg>
+              <h4>Alarms</h4>
+            </li>
+            <li class="btn primary-btn">
+              <svg class="svg-inline--fa fa-plus" aria-hidden="true" focusable="false" data-prefix="fas"
+                data-icon="plus" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg="">
+                <path fill="currentColor"
+                  d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z">
+                </path>
+              </svg>
+              <h4>Novo</h4>
 
-        <button class="turn-off-btn">Turn Alarm Off</button>
-        <button class="snooze-btn">Snooze</button>
-    </section>
-    
+            </li>
+            <li class="btn secondary-btn" id="settings">
+              <svg class="svg-inline--fa fa-sliders" aria-hidden="true" focusable="false" data-prefix="fas"
+                data-icon="sliders" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                data-fa-i2svg="">
+                <path fill="currentColor"
+                  d="M0 416c0 17.7 14.3 32 32 32l54.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 448c17.7 0 32-14.3 32-32s-14.3-32-32-32l-246.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 384c-17.7 0-32 14.3-32 32zm128 0a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM320 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm32-80c-32.8 0-61 19.7-73.3 48L32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l246.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48l54.7 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-54.7 0c-12.3-28.3-40.5-48-73.3-48zM192 128a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm73.3-64C253 35.7 224.8 16 192 16s-61 19.7-73.3 48L32 64C14.3 64 0 78.3 0 96s14.3 32 32 32l86.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 128c17.7 0 32-14.3 32-32s-14.3-32-32-32L265.3 64z">
+                </path>
+              </svg>
+              <h4>Settings</h4>
+            </li>
+          </ul>
+        </nav>
+
+      </section>
+
+    </div>
+  </div>
+
 </body>
+
 </html>

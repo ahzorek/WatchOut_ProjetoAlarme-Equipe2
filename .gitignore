@@ -130,4 +130,7 @@ dist
 .pnp.*
 
 
+# env trash
+
+*.DS_Store
 lab/
