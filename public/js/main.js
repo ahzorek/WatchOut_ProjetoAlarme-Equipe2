@@ -117,7 +117,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   //faz a primeira busca pelos dados de clima no servidor e imprime valores
   printWeather(await getWeatherData(appState.user.city), appState.user.unit)
 
-
+  //atualiza dados do clima a cada 15min com o servidor
+  setInterval(async () => printWeather(
+    await getWeatherData(appState.user.city), appState.user.unit
+  ), (15 * MIN)) //atualiza weather a cada 15min
 
 })
 const updateClock = ({ h, m, s, t }, is12HourClock) => {
@@ -227,13 +230,6 @@ const printWeather = (weather, unit) => {
   minOut.innerHTML = displayTemp(today.min, unit)
   maxOut.innerHTML = displayTemp(today.max, unit)
 
-}
-
-const getMessageFromServer = async (id) => {
-  const res = await fetch(`/message?id=${id}`)
-  const { mensagem } = await res.json()
-
-  return mensagem
 }
 
 const getTheme = async () => {
