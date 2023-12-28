@@ -162,7 +162,8 @@ const syncClockToServer = async () => {
   return appState.timeNow
 }
 
-
+//realiza ajuste periodico do relogio com o servidor (1Hora)
+setInterval(() => syncClockToServer(), HOUR)
 
 const getTimeFromServer = async () => {
   const res = await fetch('/current-time')
