@@ -143,6 +143,7 @@ const updateClock = ({ h, m, s, t }, is12HourClock) => {
   else if (s === minSecLimit && m === minSecLimit && h === hourLimit) {
     appState.timeNow.s = 0; appState.timeNow.m = 0; appState.timeNow.h = 0
 
+    getNewDate() //nova data do servidor
   }
 }
 
@@ -170,6 +171,12 @@ const getTimeFromServer = async () => {
   const { horaCerta } = await res.json()
 
   return horaCerta
+}
+
+//obtem nova data do servidor
+const getNewDate = async () => {
+  appState.currDate = await getDateFromServer()
+  printDate(appState.currDate)
 }
 
 const getDateFromServer = async () => {
