@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import { getAlarmById, getAlarmIndexById, getAlarms } from "../db/conexao.js"
+import { getAlarmById, getAlarmIndexById, getAlarms, getAlarmsByUserRefId } from "../db/conexao.js"
 
 class AlarmRepository {
 
@@ -17,6 +17,10 @@ class AlarmRepository {
   //R
   findById(id) {
     return getAlarmById(id)
+  }
+
+  findByUserId(id) {
+    return getAlarmsByUserRefId(id)
   }
 
   //U for UPDATE

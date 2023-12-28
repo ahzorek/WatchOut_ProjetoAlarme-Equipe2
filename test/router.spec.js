@@ -44,14 +44,14 @@ describe('GET /weather?city=%_cidade_%', () => {
   test('Deve retornar status 418 e body "not good my man"', async () => {
     const res = await request.get("/weather")
 
-    expect(res.body).toEqual('not good my man')
+    expect(res.body).toEqual({ message: 'not good my man' })
     expect(res.statusCode).toEqual(418)
   })
 })
 
-describe('GET /welcome-message', () => {
+describe('GET /message', () => {
   test('Deve retornar status 200 e um json com a propriedade "mensagem" e uma String com a mensagem', async () => {
-    const res = await request.get("/welcome-message")
+    const res = await request.get("/message")
     expect(res.statusCode).toEqual(200)
     expect(res.body).toHaveProperty("mensagem")
     expect(typeof (res.body.mensagem)).toEqual("string")

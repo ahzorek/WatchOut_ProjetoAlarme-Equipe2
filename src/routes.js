@@ -20,8 +20,11 @@ router.get("/current-time", DateTimeController.showTime)
 //retorna uma string com a data de hoje
 router.get("/current-date", DateTimeController.showDate)
 
+//retorna uma string com a mensagem para o horario
+router.get("/message", DateTimeController.showMessage)
+
 //retorna uma string com a mensagem de boas-vindas
-router.get("/welcome-message", DateTimeController.showMessage)
+router.get("/theme", DateTimeController.showTheme)
 
 //retorna lista de alarmes
 router.get("/alarm", AlarmController.index)
@@ -46,6 +49,9 @@ router.get("/user", UserController.index)
 
 //retorna um user por id passada
 router.get("/user/:id", UserController.show)
+
+//retorna um user por id passada
+router.post("/user/auth", UserController.auth)
 
 //cria novo user
 router.post("/user", UserController.store)

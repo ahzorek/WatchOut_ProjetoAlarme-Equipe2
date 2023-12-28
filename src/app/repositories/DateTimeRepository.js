@@ -1,3 +1,5 @@
+import { getUserById } from "../db/conexao.js"
+
 class DateTimeRepository {
   getTime() {
     return getHoraCerta()
@@ -7,8 +9,12 @@ class DateTimeRepository {
     return getHoje(req)
   }
 
-  getMessage() {
-    return getMensagem()
+  getMessage(id) {
+    return getMensagem(id)
+  }
+
+  getTheme() {
+    return defineTheme()
   }
 }
 
@@ -30,30 +36,65 @@ function getHoje(req) {
   const preferedLanguage = languages ? languages.split(',')[0] : 'pt-BR'
   const now = new Date()
 
-  const formatedDate = new Intl.DateTimeFormat(preferedLanguage, {
+  const formattedDate = new Intl.DateTimeFormat(preferedLanguage, {
     weekday: "short",
     year: "numeric",
     month: "short",
     day: "numeric",
   }).format(now)
 
-  return formatedDate
+  return formattedDate
 }
 
-function getMensagem() {
-  const user = "Frcn"
-  let horarioCompleto = getHoraCerta()
-  let hora = getHoraCerta().split(':')[0]
+function getMensagem(userId = false) {
+  let user, msg, greeting
+  try {
+    if (!userId) throw new Error('received no userId')
+    else {
+      const { data: { nome, title } } = getUserById(userId)
+      user = nome
+      greeting = title
+    }
+  }
+  catch (err) {
+    console.error('PQP', err)
+    user = 'Cine'
+    greeting = 'Sra.'
+  }
 
-  let msg = 'Boa noite'
+  const horarioCompleto = getHoraCerta()
+  const [hora] = horarioCompleto.split(':')
 
   if (hora >= 6 && hora < 12) {
     msg = "Bom dia"
-  } else if (hora >= 12 && hora < 18) {
+  }
+  else if (hora >= 12 && hora < 18) {
     msg = "Boa tarde"
   }
+  else
+    msg = "Boa noite"
 
-  return `${msg}, ${user}. agora são ${horarioCompleto}`
+  return `${msg}, ${greeting} ${user}`
+}
+
+function defineTheme() {
+  let theme
+  const horarioCompleto = getHoraCerta()
+  const [hora] = horarioCompleto.split(':')
+
+  if (hora >= 6 && hora < 12) {
+    theme = "sunrise-theme"
+  }
+  else if (hora >= 12 && hora < 18) {
+    theme = "noon-theme"
+  }
+  else if (hora >= 18 && hora < 22) {
+    theme = "afternoon-theme"
+  }
+  else
+    theme = "night-theme"
+
+  return theme
 }
 
 export default new DateTimeRepository()
