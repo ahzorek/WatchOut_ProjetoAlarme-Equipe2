@@ -97,6 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   appState.currDate = await getDateFromServer()
   printDate(appState.currDate)
 
+  greetingMessage.innerHTML = await getMessageFromServer(user)
 
 
   const updateClockInterval = async () => {
@@ -165,6 +166,16 @@ const syncClockToServer = async () => {
 
 //realiza ajuste periodico do relogio com o servidor (1Hora)
 setInterval(() => syncClockToServer(), HOUR)
+
+
+//teste de dados (verificar a longo prazo o comportamento do relogio) //
+setInterval(async () => {
+  console.log(
+    'original time string:::', appState.timeString,
+    'current time string :::', appState.timeStringUpdated(),
+    'new time from server:::', await getTimeFromServer()
+  )
+}, 15 * MIN)
 
 const getTimeFromServer = async () => {
   const res = await fetch('/current-time')
@@ -237,7 +248,6 @@ const printWeather = (weather, unit) => {
   tempOut.innerHTML = displayTemp(temp, unit) + unit
   minOut.innerHTML = displayTemp(today.min, unit)
   maxOut.innerHTML = displayTemp(today.max, unit)
-
 }
 
 const getTheme = async () => {
@@ -252,6 +262,13 @@ const getUser = async (userId) => {
   const { data } = await res.json()
 
   return data
+}
+
+const getMessageFromServer = async (id) => {
+  const res = await fetch(`/message?id=${id}`)
+  const { mensagem } = await res.json()
+
+  return mensagem
 }
 
 const getAlarms = async (alarmId) => {
