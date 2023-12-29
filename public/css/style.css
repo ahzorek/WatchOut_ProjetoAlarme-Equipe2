@@ -1,107 +1,300 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,700;1,400;1,700&display=swap');
+ @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap');
+ @import './typography.css';
+ @import './themes.css';
+ 
+ 
+ html {
+     overflow: hidden;
+    --default-margin-top: calc(2* var(--default-padding));
+    --default-margin-bottom: var(--default-padding);
 
-/* QUEBRANDO EM TELAS MENORES QUE 788PX DE ALTURA! */
+}
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+::selection{
+    background-color: var(--color-500);
+    color: var(--color-100);
 }
 
 body {
-    height: 100dvh;
-    background-image: linear-gradient(to left bottom, #FFE27F, #FBAF55, #E97834);
-    background-repeat: no-repeat;
+    height: 100svh;
+    width: 100vw;
+    background-color: rgb(13 13 13);
+    overflow: hidden;
+    /* border: 2px red solid; */
+}
+
+.app {
+    width: 120vw;
+    height: 100%;
+    border-radius: var(--border-radius-md);
+    position: relative;
+    background-color: var(--color-600);
+    background-image: var(--main-gradient);
+
+    transform: translateX(-10vw);
+    transition: all 200ms ease-in-out;
+}
+
+.app.settings {
+    transform: translateX(-110vw);
+}
+.app.alarms {
+    transform: translateX(90vw);
+}
+
+.settings_screen {
+    display: none;
+    opacity: 0;
+}
+
+.alarms_screen {
+    display: none;
+    opacity: 0;
+}
+
+.dashboard {
+    width: 100vw;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 2rem;
 }
 
-header {
+.weather-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgba(255, 226, 127, .4);
-    width: 95dvw;
-    height: 156px;
-    padding: 28px;
-    border-radius: 13px;
-    color: #BD4C2E;
-    font-weight: bold;
-    margin: 55px 0;
+
+    background-color: var(--weather-card-bg);
+    color: var(--weather-card-text);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--very--light-drop-shadow);
+
+    width: calc(100vw - calc(2* var(--default-padding)));
+    margin: var(--default-margin-top) auto 0;
+    padding: var(--default-padding);
 }
 
-.temp, .temp-span {
-    font-size: 48px;
+.weather-info {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
 }
 
-.min-max {
-    font-size: 12px;
+.weather-info .city-name {
+    font-size: var(--mobile--weather-box--city-title);
+    font-weight: 500;
+}
+
+.weather-info .temp {
+    font-size: var(--mobile--weather-box--main-temp);
+}
+.weather-info .temp sup {
+    font-size: calc(.725* var(--mobile--weather-box--main-temp));
+}
+
+
+.weather-tags {
+    display: flex;
+    gap: .35rem;
+}
+
+.weather-tags > span {
+    font-size: .8rem;
+    background-color: var(--color-600);
+    color: var(--color-200);
+    padding: 4px;
+    border-radius: 6px;
 }
 
 .weather-icon {
-    width: 60px;
-    height: 47px;
+    height: 80px;
+    aspect-ratio: 1/1;
 }
 
 .time-date-container {
-    color: #BD4C2E;
+    text-align: center;
+    color: var(--text-watch-face);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
 }
 
 .time {
-    font-size: 120px;
-    margin-bottom: 8px;
+    font-size: 5.6rem;
+    font-weight: 500;
+    letter-spacing: -.275rem;
+    transition: all 250ms ease-in-out;
 }
+
+/* .sec-digit {
+  display: inline-block;
+  position: relative;
+  animation: flip 1s infinite;
+} */
 
 .date {
-    font-size: 24px;
+    font-size: 1.25rem;
+}
+
+.alarm{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    width: (100% - 20vw - calc(var(--default-padding)*2));
+    width: 70%;
+    gap: 1rem;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(500%) scale(0);
+    background-color: rgba(250, 250, 250, 0.7);
+    backdrop-filter: blur(10px);
+    color: var(--color-600);
     text-align: center;
-    margin-bottom: 75px;
+    padding: 2rem;
+    border-radius: var(--border-radius-md);
+    transition: all ease-in 250ms;
 }
 
-.alarm-container {
-    background-color: #BD4C2E;
-    width: 95dvw;
-    height: 35dvh;
-    border-radius: 13px;
-    padding: 28px;
-    font-size: 24px;
-    font-weight: medium;
+.active {
+    transform: translateX(-50%) translateY(-50%) scale(1);
+}
+
+.bottom-container {
+    position: absolute;
+    bottom: 0;
+    width: 100vw;
     text-align: center;
+    background-color: var(--alert-box-bg);
+    color: var(--alert-box-text);
+    /* border-radius: var(--border-radius-md) var(--border-radius-md) 0 0; */
+    box-shadow: var(--very--light-drop-shadow-up);
+    padding: var(--default-padding);
+    padding-bottom: var(--default-margin-bottom);
 }
 
-.message, .alarm-description, .turn-off-btn {
-    color: #FFE27F;
-    font-size: 24px;
+.main-navigation {
+    width: 100%;
+    margin-inline: auto;
+    /* border: solid 1px magenta; */
 }
 
-.alarm-description {
-    margin-bottom: 35px;
+.main-navigation h4 {
+    font-size: .7rem;
+    /* border: solid 1px green; */
+}
+
+.main-navigation svg {
+    aspect-ratio: 1/1;
+    height: 1.5rem;
+    margin-bottom: .075rem;
+    /* border: solid 1px red; */
+}
+
+.main-navigation ul {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    gap: 1rem;
+}
+
+.box-title {
+    font-weight: 700;
 }
 
 .alarm-title {
-    font-weight: bold;
+    font-weight: 700;
 }
 
-.turn-off-btn, .snooze-btn {
-    font-weight: bold;
-    width: 82dvw;
-    height: 60px;
-    margin: auto;
-    border-radius: 13px;
+.btn-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.btn {
     border: none;
+    cursor: pointer;
+    width: calc(100% - .4rem);
+    padding-block: .75rem;
+    border-radius: calc(var(--border-radius-md) - calc(var(--default-padding)/ 4));
+    transition: all 100ms ease-in-out;
 }
 
-.turn-off-btn {
-    background-color: #E97834;
-    margin-bottom: 15px;
+.primary-btn {
+    background-color: var(--primary-btn-bg);
+    color: var(--primary-btn-text);
+}
+
+.secondary-btn:hover {
+    background-color: var(--color-100);
+    color: var(--color-600);
 }
 
 .snooze-btn {
-    background-color: #FBAF55;
-    color: #BD4C2E;
-    font-size: 24px;
+    background-color: transparent;
+    color: var(--primary-btn-bg);
+    /* border: 1px solid var(--primary-btn-bg); */
 }
 
-/* QUEBRANDO EM TELAS MENORES QUE 788PX DE ALTURA! */
+.primary-btn:hover, .primary-btn:focus, .primary-btn:focus-within {
+    outline: transparent;
+    box-shadow: 0 0 0 .2em var(--alert-box-bg),  0 0 0 .4em var(--primary-btn-bg)
+}
+
+.snooze-btn:hover, .snooze-btn:focus, .snooze-btn:focus-within {
+    background-color: var(--color-100);
+    color: var(--primary-btn-bg);
+    /* border: 1px solid var(--primary-btn-bg); */
+}
+
+@keyframes entrance {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes swipe-up {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes flip {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  15%, 85% {    
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+}
+
+
+@media screen and ( min-height: 668px ) {
+    :root{
+        --default-margin-top: calc(3* var(--default-padding));
+        --default-margin-bottom: calc(var(--default-padding) + 20pt);
+    }
+}

@@ -1,0 +1,16 @@
+{
+  "short_name": "Watch Out",
+  "name": "Watch Out - alpha 0.0.2",
+  "icons": [
+    {
+      "src": "img/watch.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/index.html?hideSec=true&theme=noon-theme&city=Penha",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#5FD7F9",
+  "background_color": "#5FD7F9"
+}

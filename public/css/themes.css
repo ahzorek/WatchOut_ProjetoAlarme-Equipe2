@@ -1,0 +1,163 @@
+:root{    
+    /* Color styles */
+
+    /* paleta Night */
+    --night-100: rgba(219, 219, 252, 1);
+    --night-200: rgba(149, 148, 200, 1);
+    --night-300: rgba(76, 70, 144, 1);
+    --night-400: rgba(61, 52, 115, 1);
+    --night-500: rgba(55, 50, 82, 1);
+    --night-600: rgb(37, 34, 58);
+
+    /* paleta Afteroon */
+    --afternoon-100: rgba(255, 226, 127, 1);
+    --afternoon-100t60: rgba(255, 226, 127, .6);
+    --afternoon-200: rgba(251, 175, 85, 1);
+    --afternoon-300: rgba(252, 131, 36, 1);
+    --afternoon-400: rgba(233, 120, 52, 1);
+    --afternoon-500: rgba(189, 76, 46, 1);
+    --afternoon-600: rgb(160, 63, 36);
+
+    /* paleta Sunrise */
+    --sunrise-100: rgba(255, 224, 191, 1);
+    --sunrise-200: rgba(243, 179, 169, 1);
+    --sunrise-300: rgba(232, 142, 160, 1);
+    --sunrise-400: rgba(200, 133, 185, 1);
+    --sunrise-500: rgba(152, 99, 177, 1);
+    --sunrise-500t80: rgba(152, 99, 177, .8);
+    --sunrise-600: rgba(139, 77, 168, 1);
+
+    /* paleta Noon */
+    --noon-50: rgba(254, 254, 217, 1);
+    --noon-100t60: rgba(209, 245, 243, .6);
+    --noon-100: rgba(209, 245, 243, 1);
+    --noon-200: rgba(174, 236, 243, 1);
+    --noon-300: rgba(95, 215, 249, 1);
+    --noon-400: rgba(84, 179, 237, 1);
+    --noon-500: rgba(50, 160, 230, 1);
+    --noon-600: rgb(40, 145, 215);
+
+    /* paleta Neutra */
+    --neutral-100: rgb(245, 245, 245);
+    --neutral-200: rgba(188, 188, 190, 1);
+    --neutral-300: rgba(140, 140, 140, 1);
+    --neutral-400: rgba(86, 86, 86, 1);
+    --neutral-500: rgba(42, 42, 42, 1);
+    --neutral-600: rgb(23, 23, 23);
+
+    /* Text-size styles */
+    /* base size: default (16) */
+    --mobile-dashboard-clock--basic-4digit: 5rem;
+    --mobile--weather-box--main-temp: 2rem;
+    --mobile--weather-box--city-title: 1rem;
+
+    /* Effect styles */
+    --very--light-drop-shadow:  0px 4px 10px rgba(60, 60, 60, 0.08);
+    --very--light-drop-shadow-up:  0px -4px 10px rgba(60, 60, 60, 0.08);
+    --border-radius-md: 1.02rem;
+
+    /* paddings, margins, sizes */
+    --default-padding: 19px;
+}
+
+.afternoon-theme {
+    --main-gradient: linear-gradient( to left bottom, 
+        var(--afternoon-100), var(--afternoon-200), var(--afternoon-400)
+        );
+    --weather-card-bg: var(--afternoon-100t60);
+    --weather-card-text: var(--afternoon-500);
+    --color-50: var(--afternoon-50);
+    --color-100: var(--afternoon-100);
+    --color-200: var(--afternoon-200);
+    --color-300: var(--afternoon-300);
+    --color-400: var(--afternoon-400);
+    --color-500: var(--afternoon-500);
+    --color-600: var(--afternoon-600);
+    --text-watch-face: var(--afternoon-500);
+    --primary-btn-text: var(--afternoon-100);
+    --primary-btn-bg: var(--afternoon-500);
+    --alert-box-bg: var(--afternoon-100t60);
+    --alert-box-text: var(--afternoon-500);
+
+}
+
+.noon-theme {
+    --main-gradient: linear-gradient( to bottom, 
+        var(--noon-100) 0%, var(--noon-200) 10%, var(--noon-400) 65%
+        );
+    --weather-card-bg: var(--noon-100);
+    --weather-card-text: var(--noon-500);
+    --color-50: var(--noon-50);
+    --color-100: var(--noon-100);
+    --color-200: var(--noon-200);
+    --color-300: var(--noon-300);
+    --color-400: var(--noon-400);
+    --color-500: var(--noon-500);
+    --color-600: var(--noon-600);
+    --text-watch-face: var(--noon-50);
+    --primary-btn-text: var(--noon-50);
+    --primary-btn-bg: var(--noon-500);
+    --alert-box-bg: var(--noon-200);
+    --alert-box-text: var(--noon-500);
+}
+
+.night-theme {
+    --main-gradient: linear-gradient( 350deg, 
+        var(--night-200) -40%, var(--night-300), var(--night-500) 120%
+        );
+    --weather-card-bg: var(--night-500);
+    --weather-card-text: var(--night-100);
+    --color-50: var(--night-100);
+    --color-100: var(--night-100);
+    --color-200: var(--night-200);
+    --color-300: var(--night-300);
+    --color-400: var(--night-400);
+    --color-500: var(--night-500);
+    --color-600: var(--night-600);
+    --text-watch-face: var(--night-100);
+    --primary-btn-text: var(--night-100);
+    --primary-btn-bg: var(--night-400);
+    --alert-box-bg: var(--night-200);
+    --alert-box-text: var(--night-500);
+}
+
+.sunrise-theme {
+    --main-gradient: linear-gradient( 230deg, 
+    var(--sunrise-200) , 
+    var(--sunrise-300) , 
+    var(--sunrise-400) , 
+    var(--sunrise-500) 
+    );
+    --weather-card-bg: var(--sunrise-500t80);
+    --weather-card-text: var(--sunrise-100);
+    --color-50: var(--sunrise-100);
+    --color-100: var(--sunrise-100);
+    --color-200: var(--sunrise-200);
+    --color-300: var(--sunrise-300);
+    --color-400: var(--sunrise-400);
+    --color-500: var(--sunrise-500);
+    --color-600: var(--sunrise-600);
+    --text-watch-face: var(--sunrise-600);
+    --primary-btn-text: var(--sunrise-100);
+    --primary-btn-bg: var(--sunrise-500);
+    --alert-box-bg: var(--sunrise-200);
+    --alert-box-text: var(--sunrise-600)
+}
+
+.neutral-theme {
+    --main-gradient: none;
+    --weather-card-bg: var(--neutral-500);
+    --weather-card-text: var(--neutral-100);
+    --color-50: var(--neutral-100);
+    --color-100: var(--neutral-100);
+    --color-200: var(--neutral-200);
+    --color-300: var(--neutral-300);
+    --color-400: var(--neutral-400);
+    --color-500: var(--neutral-500);
+    --color-600: var(--neutral-600);
+    --text-watch-face: var(--neutral-200);
+    --primary-btn-text: var(--neutral-100);
+    --primary-btn-bg: var(--neutral-500);
+    --alert-box-bg: var(--neutral-200);
+    --alert-box-text: var(--neutral-500)
+}
