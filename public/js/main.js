@@ -3,6 +3,7 @@ console.log("sup") // sup
 //gerenciar estado da aplicação enquanto em execução
 const appState = {
   isFocused: true,
+  devStopped: null,
   isAlarmInitialized: false,
   currentScreen: 'dashboard',
   lastUpdated: null,
@@ -13,13 +14,20 @@ const appState = {
     t: null,
   },
   timeString: null,
-  timeStringUpdated: () => `${formatTime(appState.timeNow.h)}:${formatTime(appState.timeNow.m)}:${formatTime(appState.timeNow.s)}`,
+  timeStringUpdated: function () {
+    return `${formatTime(this.timeNow.h)}:${formatTime(this.timeNow.m)}:${formatTime(this.timeNow.s)}`
+  },
   currDate: null,
-  hideSec: null,
-  is12HourClock: null,
-  tempUnit: null,
   user: null,
-  alarms: [],
+
+  setProperty: function (prop, value) { this[prop] = value },
+  setCurrentScreen: function (nextScreen) { this.currentScreen = nextScreen },
+  setCurrDate: function (date) { this.currDate = date },
+
+  updateLocalAlarmData: function (id, data) {
+    const localIndex = this.user.alarms.findIndex(alarm => alarm.id == id)
+    this.user.alarms[localIndex] = data
+  }
 
 }
 
@@ -40,37 +48,46 @@ const greetingMessage = document.querySelector('.greeting-message')
 //interaction elements(buttons, mostly)
 const alarmsBtn = document.getElementById('alarms')
 const settingsBtn = document.getElementById('settings')
+const closeButtons = document.querySelectorAll('.close-screen')
+const settingsForm = document.querySelector('.settings-form')
 
-window.addEventListener('blur', () => {
-  // console.log('focus lost')
-  //relogio "dorme" apos 5min se foco na sua tela
-  setTimeout(() => {
-    console.log('relogio dormiu', appState.timeStringUpdated())
-    appState.isFocused = false
-  }, 5 * MIN)
-})
-
-window.addEventListener('focus', async () => {
-  if (!appState.isFocused) {
-    // console.log('focus gained')
-    //relogio acorda apos foco na tela ser retomado, synca ajuste com servidor
-    appState.isFocused = true
-    printTime(await syncClockToServer())
+document.addEventListener('visibilitychange', async () => {
+  if (document.hidden) {
+    console.log('detected sleep, clock is', document.visibilityState)
   }
+  //relogio acorda apos foco na tela ser retomado, synca ajuste com servidor
+  printTime(await syncClockToServer(), true)
+
 })
 
 settingsBtn?.addEventListener('click', () => {
+  document.querySelector('.settings-screen').classList.add('active')
   app.classList.add('settings')
 })
 
 alarmsBtn?.addEventListener('click', () => {
+  document.querySelector('.alarms-screen').classList.add('active')
   app.classList.add('alarms')
+})
+
+function backToDashboard() {
+  console.log('closing side screen')
+  document.querySelector('.settings-screen').classList.remove('active')
+  document.querySelector('.alarms-screen').classList.remove('active')
+  app.setAttribute('class', 'app')
+
+}
+
+closeButtons?.forEach(button => {
+  button?.addEventListener('click', () => {
+    backToDashboard()
+  })
 })
 
 document.addEventListener('keydown', (e) => {
   // console.log(e)
-  if (e.key === 'Backspace') {
-    app.setAttribute('class', 'app')
+  if (e.key === 'Backspace' && e.target.nodeName !== 'INPUT') {
+    backToDashboard()
   }
 })
 
@@ -79,13 +96,20 @@ const params = new URLSearchParams(window.location.search)
 
 document.addEventListener('DOMContentLoaded', async () => {
   //carrega definições de usuário
-  const user = params.get('user') || localStorage.getItem('userId')
-  await initializeUser(await getUser(user))
+  const userId = params.get('user') || localStorage.getItem('userId') || null
+  try {
+    const user = await getUser(userId)
+    await initializeAlarms(user) //busca config do usuario no servidor
+  } catch (err) {
+    console.error('erro:', err)
+  }
 
-  //define tema da aplicação com base no horario em servidor (ou sobrescreve com params locais, para testes mainly)
-  const theme = appState.user.settings.useNeutralTheme
+  //define tema da aplicação com base no horario em servidor (ou sobrescreve com params locais, para testes)
+  const theme = appState.user?.useNeutralTheme
     ? 'neutral-theme'
     : params.get('theme') || await getTheme()
+
+  greetingMessage.innerHTML = await getMessageFromServer(userId)
 
   //aplica o tema ao elemento html(root)
   htmlRootEl.setAttribute('class', theme)
@@ -97,13 +121,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   appState.currDate = await getDateFromServer()
   printDate(appState.currDate)
 
-  greetingMessage.innerHTML = await getMessageFromServer(user)
-
-
   const updateClockInterval = async () => {
-    if (appState.isFocused) {
+    if (appState.isFocused && !appState.devStopped) {
       //roda o ajuste local do horario
-      updateClock(appState.timeNow)
+      incrementClock(appState.timeNow)
 
       //mostra o horario correto apos ajuste local
       printTime(appState.timeNow)
@@ -123,10 +144,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     await getWeatherData(appState.user.city), appState.user.unit
   ), (15 * MIN)) //atualiza weather a cada 15min
 
+
+  renderSettingsScreen(appState.user)
+
+  renderAlarmCardsScreen(appState.user.alarms)
+
+  settingsForm.addEventListener('submit', (e) => handleSettingsChanges(e))
+
+
 })
-const updateClock = ({ h, m, s, t }, is12HourClock) => {
+
+const incrementClock = ({ h, m, s }) => {
   const minSecLimit = 59
-  const hourLimit = is12HourClock ? 11 : 23
+  const hourLimit = 23
   //verifica qual atualização deve ser realizada, ajusta o horario
   //se apenas seg, atualiza seg (incrementa)
   if (s < minSecLimit) {
@@ -134,17 +164,23 @@ const updateClock = ({ h, m, s, t }, is12HourClock) => {
   }
   //se seg e min atualiza seg (zera) e min (incrementa)
   else if (s === minSecLimit && m < minSecLimit) {
-    appState.timeNow.s = 0; appState.timeNow.m += 1
+    appState.timeNow.s = 0;
+    appState.timeNow.m += 1
   }
   //se seg, min e hora, atualiza os 3 valores (zera seg, min, incrementa hora)
   else if (s === minSecLimit && m === minSecLimit && h < hourLimit) {
-    appState.timeNow.s = 0; appState.timeNow.m = 0; appState.timeNow.h += 1
+    appState.timeNow.s = 0;
+    appState.timeNow.m = 0;
+    appState.timeNow.h += 1
   }
   // se ha tambem virada do dia, zera seg, min, hora e atualiza data com nova chamada no servidor
   else if (s === minSecLimit && m === minSecLimit && h === hourLimit) {
-    appState.timeNow.s = 0; appState.timeNow.m = 0; appState.timeNow.h = 0
+    appState.timeNow.h = 0
+    appState.timeNow.m = 0
+    appState.timeNow.s = 0
 
-    getNewDate() //nova data do servidor
+    //muda também o dia buscando nova data no servidor
+    getNewDate()
   }
 }
 
@@ -170,13 +206,25 @@ setInterval(() => syncClockToServer(), HOUR)
 
 //teste de dados (verificar a longo prazo o comportamento do relogio) //
 setInterval(async () => {
-  console.log(
+  console.table(
     'original time string:::', appState.timeString,
     'current time string :::', appState.timeStringUpdated(),
     'new time from server:::', await getTimeFromServer()
   )
 }, 15 * MIN)
 
+//atualiza data na virada do dia
+const getNewDate = async () => {
+  const newDate = await getDateFromServer()
+  if (newDate !== appState.currDate) {
+    appState.currDate = newDate
+    printDate(appState.currDate)
+    return
+  } else
+    getNewDate()
+}
+
+//busca o horario no servidor
 const getTimeFromServer = async () => {
   const res = await fetch('/current-time')
   const { horaCerta } = await res.json()
@@ -184,12 +232,7 @@ const getTimeFromServer = async () => {
   return horaCerta
 }
 
-//obtem nova data do servidor
-const getNewDate = async () => {
-  appState.currDate = await getDateFromServer()
-  printDate(appState.currDate)
-}
-
+//busca a data no servidor
 const getDateFromServer = async () => {
   const res = await fetch('/current-date')
   const { hoje } = await res.json()
@@ -197,6 +240,7 @@ const getDateFromServer = async () => {
   return hoje
 }
 
+//busca dados do clima no servidor
 const getWeatherData = async (city = 'Florianopolis') => {
   const res = await fetch(`/weather?city=${city}`)
   const { results } = await res.json()
@@ -204,6 +248,7 @@ const getWeatherData = async (city = 'Florianopolis') => {
   return results
 }
 
+//separa a string horario em um objeto com numbers {h,m,s}
 const splitTimeString = (currTime) => {
   let [h, m, s] = currTime.split(':')
 
@@ -216,18 +261,44 @@ const splitTimeString = (currTime) => {
 
 const formatTime = (num) => String(num).padStart(2, '0')
 
-const printTime = ({ h, m, s }) => {
-  if (appState.user.settings.hideSec) {
-    watchFace.innerHTML = `${(h)}:${formatTime(m)}`
-  }
-  else
-    watchFace.innerHTML = `${h}:${formatTime(m)}:<span class="sec-digit">${formatTime(s)}</span>`
+const printTime = ({ h, m, s }, forceUpdate, alarmView) => {
+  let output, newRender
+  const hour = appState.user.is12Hour && h > 12 ? (h - 12) : h // se o relógio for de 12h E se for depois das 12h, então hora = h - 12, se não hora = h
+  const min = m
+  const sec = s
+  const suffix = appState.user.is12Hour && h >= 12 ? 'PM' : 'AM'
+  const suffixWrapper = `<span class="time-format-suffix">${suffix}</span>`
 
-  watchFace.setAttribute('datetime', `${formatTime(h)}:${formatTime(m)}:${formatTime(s)}`)
+  if (forceUpdate) console.log('forced update')
+
+  if (appState.user.hideSec || alarmView) {
+    //se o usuario opta por nao mostrar os segundos, nao precisamos renderizar uma nova string a cada segundo, logo podemos garantir que
+    //o novo render so ocorra em minutos cheios (04:20:00, por ex). porém, ao retomar o app de um periodo de hibernação,
+    //sincronizamos o relogio com o servidor e queremos garantir que esse valor va pra tela imediatamente, ai entra a flag forceUpdate
+    //se passado *true* como terceiro param para a função printTime, garante que o novo valor seja enviado para a tela
+    if (s === 0 | watchFace.innerHTML === '' | forceUpdate) {
+      output = `${(hour)}:${formatTime(min)}${appState.user.is12Hour ? suffixWrapper : ''}`
+      newRender = true
+    }
+    else if (alarmView) {
+      output = `${(hour)}:${formatTime(min)}${appState.user.is12Hour ? suffixWrapper : ''}`
+    }
+  }
+  //se os segundos são mostrados a atualização ocorre normalmente todo segundo (1000ms)
+  else {
+    output = `${hour}:${formatTime(min)}:<span class="sec-digit">${formatTime(sec)}</span>${appState.user.is12Hour ? suffixWrapper : ''}`
+    newRender = true
+  }
+
+  if (newRender) {
+    renderDOM(watchFace, 'innerHTML', output)
+    newRender = false
+  }
+  return output
 }
 
 const printDate = (date) => {
-  displayDate.innerHTML = date
+  renderDOM(displayDate, 'innerHTML', date)
   return
 }
 
@@ -240,18 +311,20 @@ const printWeather = (weather, unit) => {
 
   const { city, temp, condition_slug, forecast } = weather
   const [today] = forecast
+  const tempNow = formatTemperature(temp, unit) + (unit !== "K" ? unit : '')
+  const tempMin = formatTemperature(today.min, unit)
+  const tempMax = formatTemperature(today.max, unit)
+  const tempIcon = `https://assets.hgbrasil.com/weather/icons/conditions/${condition_slug}.svg`
 
-  weatherIcon.src = `https://assets.hgbrasil.com/weather/icons/conditions/${condition_slug}.svg`
-
-  cityOut.innerHTML = city
-
-  tempOut.innerHTML = displayTemp(temp, unit) + unit
-  minOut.innerHTML = displayTemp(today.min, unit)
-  maxOut.innerHTML = displayTemp(today.max, unit)
+  renderDOM(cityOut, 'innerHTML', city)
+  renderDOM(tempOut, 'innerHTML', tempNow)
+  renderDOM(minOut, 'innerHTML', tempMin)
+  renderDOM(maxOut, 'innerHTML', tempMax)
+  renderDOM(weatherIcon, 'src', tempIcon)
 }
 
-const getTheme = async () => {
-  const res = await fetch(`/theme`)
+const getTheme = async (timeStamp = false) => {
+  const res = await fetch(`/theme?hour=${timeStamp}`)
   const { tema } = await res.json()
 
   return tema
@@ -264,10 +337,15 @@ const getUser = async (userId) => {
   return data
 }
 
-const getMessageFromServer = async (id) => {
-  const res = await fetch(`/message?id=${id}`)
-  const { mensagem } = await res.json()
+// const getMessageFromServer = async (id) => {
+//   const res = await fetch(`/message?id=${id}`)
+//   const { mensagem } = await res.json()
 
+//   return mensagem
+// }
+
+const getMessageFromServer = async (id) => {
+  const { mensagem } = await fetchContent(`/message?id=${id}`)
   return mensagem
 }
 
@@ -279,7 +357,8 @@ const getAlarms = async (alarmId) => {
 
 }
 
-const initializeUser = async (user) => {
+const initializeAlarms = async (user) => {
+  console.log('initializing alarms for user,', user)
   appState.user = {
     ...user,
     alarms: await Promise.all(user.alarms.map(async (alarmId) => {
@@ -290,7 +369,7 @@ const initializeUser = async (user) => {
   return
 }
 
-const displayTemp = (celsius, out) => {
+const formatTemperature = (celsius, out) => {
   if (out !== 'C') {
     let temp_celsius = +celsius
     if (temp_celsius < -273.15) temp_celsius = -273.15
@@ -302,7 +381,7 @@ const displayTemp = (celsius, out) => {
       return fahrenheit + 'º'
     }
     else if (out === 'K') {
-      return kelvin + 'K'
+      return ~~kelvin + 'K'
     }
   }
   else
@@ -331,3 +410,278 @@ const handleAlarmActive = () => {
 }
 
 handleAlarmActive()
+
+function renderDOM(element, outputType, value) {
+  element[outputType] = value
+  return
+}
+
+async function fetchContent(url) {
+  const res = await fetch(url)
+  return res.json()
+}
+
+async function handleSettingsChanges(e) {
+  e.preventDefault()
+
+  const userInfoEditing = {
+    // title: document.getElementById('formaTratamento').value,
+    nome: document.getElementById('nome').value,
+    city: document.getElementById('city').value,
+    unit: document.querySelector('input[name="unit"]:checked').value,
+    hideSec: Boolean(document.querySelector('input[name="hideSec"]:checked').value == 'true'),
+    is12Hour: Boolean(document.querySelector('input[name="is12Hour"]:checked').value == 'true'),
+    useNeutralTheme: document.querySelector('input[name="useNeutralTheme"]:checked').value === 'true',
+    defaultRingtone: document.getElementById('defaultRingtone').value,
+  }
+  console.log('nova informação que vai ser enviada', userInfoEditing)
+  try {
+    const userId = params.get('user') || localStorage.getItem('userId') || null
+    const response = await fetch(`/user/${userId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userInfoEditing),
+    })
+
+    if (!response.ok) {
+      throw new Error(`bad stuff: ${response.status}`)
+    }
+    const data = await response.json()
+    console.log('novo objeto usuario recebido', data)
+
+    backToDashboard()
+    location.reload() //horrivel hdashsdhashdhdashds
+
+  } catch (err) {
+    console.error('Error:', err)
+  }
+}
+
+function renderSettingsScreen(user) {
+  const settings = document.querySelector('.settings-items')
+  settings.innerHTML = ''
+
+  //não é a forma ideal, mas funciona, POR ENQUANTO :)
+  const template = `
+    <fieldset>
+      <h3 class="title3" >Tratamento</h3>
+      <select id="formaTratamento" name="formaTratamento">
+        <option selected disabled value="null">Selecione</option>
+        <option value="sr">Sr.</option>
+        <option value="sra">Sra.</option>
+        <option value="srta">Srta.</option>
+        <option value="dr">Dr.</option>
+        <option value="dra">Dra.</option>
+        <option value="prof">Prof.</option>
+        <option value="profa">Profa.</option>
+        <option value="presidente">Presidente</option>
+        <option value="diretor">Diretor</option>
+        <option value="diretora">Diretora</option>
+      </select>
+    </fieldset>
+    <fieldset>
+      <h3 class="title3">Seu Nome</h3>
+      <input id="nome" type="text" value="${user.nome}" name="nome"/>
+    </fieldset>
+    <fieldset>
+      <h3 class="title3">Cidade ou Região</h3>
+      <input id="city" type="text" value="${user.city}" name="city"/>
+    </fieldset>
+    <fieldset>
+      <h3 class="title3" >Unidade Temperatura</h3>
+      <div class="segmented-picker">
+        <input value="C" id="C" type="radio" name="unit" ${appState.user.unit === 'C' ? 'checked' : ''} />
+        <label for="C"><span>Celsius</span></label>
+
+        <input value="F" id="F" type="radio" name="unit" ${appState.user.unit === 'F' ? 'checked' : ''} />
+        <label for="F"><span>Fahrenheit</span></label>
+
+        <input value="K" id="K" type="radio" name="unit" ${appState.user.unit === 'K' ? 'checked' : ''} />
+        <label for="K"><span>Kelvin</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <h3 class="title3">Segundos</h3>
+      <div class="segmented-picker">
+        <input value="false" id="show" type="radio" name="hideSec"  ${!appState.user.hideSec ? 'checked' : ''} />
+        <label for="show"><span>Mostrar</span></label>
+        <input value="true" id="hide" type="radio" name="hideSec" ${!!appState.user.hideSec ? 'checked' : ''} />
+        <label for="hide"><span>Esconder</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <h3 class="title3">Formato Relógio</h3>
+      <div class="segmented-picker">
+        <input value="true" id="is12hour" type="radio" name="is12Hour" ${!!appState.user.is12Hour ? 'checked' : ''} />
+        <label for="is12hour"><span>12 Horas</span></label>
+        <input value="false" id="is24hour" type="radio" name="is12Hour" ${!appState.user.is12Hour ? 'checked' : ''} />
+        <label for="is24hour"><span>24 Horas</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <h3 class="title3">Usar Tema Neutro</h3>
+      <div class="segmented-picker">
+        <input value="true" id="yes" type="radio" name="useNeutralTheme" ${appState.user.useNeutralTheme ? 'checked' : ''} />
+        <label for="yes"><span>Sim</span></label>
+
+        <input value="false" id="no" type="radio" name="useNeutralTheme" ${!appState.user.useNeutralTheme ? 'checked' : ''}/>
+        <label for="no"><span>Não</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <h3 class="title3">Toque Padrão</h3>
+      <select id="defaultRingtone" name="defaultRingtone">
+        <option selected disabled value="null">Selecione</option>
+        <option value="marimba">Marimba</option>
+      </select>
+    </fieldset>
+  `
+
+  settings.innerHTML = template
+}
+
+function renderAlarmCardsScreen(alarms) {
+  const alarmsList = document.querySelector('.alarms-list')
+  alarmsList.innerHTML = ''
+
+  alarms.forEach(async ({ id, alarmTime, description, isActive, days, isRepeating, isSnoozeEnabled }) => {
+    const alarmCard = document.createElement('li')
+    const [h, m, s] = alarmTime.split(':')
+    const theme = await getTheme(alarmTime)
+
+    alarmCard.classList.add('settings-card')
+    alarmCard.classList.add(theme)
+
+    alarmCard.setAttribute('title', description)
+    alarmCard.setAttribute('data-attribute-id', id)
+
+    alarmCard.innerHTML = `
+      <section>
+        <span class="alarm-time">
+          <date>${printTime({ h, m, s }, false, true)}</date>
+        </span>
+        <span class="alarm-icons">
+          ${isSnoozeEnabled ? snoozeIcon : ''}
+          ${isRepeating ? repeatIcon : ''}
+        </span>
+        <span class="alarm-toggle">
+          <input id="${id}" onChange="handleAlarmStatus(this)" type="checkbox" ${isActive ? 'checked' : ''} class="switch">
+        </span>
+      </section>
+
+      <section>
+        <h3 class="alarm-title" title="${description}">
+          ${description}
+        </h3>
+      </section>
+
+      <section>
+        <span class="alarm-days">
+          ${displayDaysTag(days)}
+        </span>
+        <span class="alarm-edit-btn">
+          editBtn
+        </span>
+      </section>
+    `
+    alarmsList.appendChild(alarmCard)
+  })
+}
+
+//não gosto muito da abordagem pq recorre a uma função inline, da pra mudar no futuro, por enquanto funciona
+async function handleAlarmStatus({ id, checked }) {
+  try {
+    const response = await fetch(`/alarm/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        isActive: checked,
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error(`bad stuff: ${response.status}`)
+    }
+    const data = await response.json()
+
+    appState.updateLocalAlarmData(id, data)
+
+  } catch (err) {
+    console.error('Error:', err)
+    renderAlarmCardsScreen(appState.user.alarms)
+  }
+}
+
+function displayDaysTag(days) {
+  let outputTags; const tags = []
+
+  Object.keys(days).forEach(day => {
+    if (days[day]) tags.push(day)
+  })
+
+  if (tags.length <= 0) { //essa opção não deve existir. precisa assegurar no codigo de cadastro de cada alarme que ele so pode ser salvo com pelo menos um dia valido atribuido
+    outputTags = `<span class="tag-day">No Days</span>`
+  }
+  else
+    if (tags.length === 7) {
+      outputTags = `<span class="tag-day">Everyday</span>`
+    }
+    else {
+      outputTags = tags.map(day => `<span class="tag-day">${day}</span>`).join('')
+    }
+
+  return outputTags
+}
+
+
+const snoozeIcon = `
+  <svg fill="#000000" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+    <g id="SVGRepo_iconCarrier">
+      <path
+        d="M 10.4922 26.8750 L 25.3984 26.8750 C 26.5234 26.8750 27.1563 26.2656 27.1563 25.2344 C 27.1563 24.2032 26.5234 23.6172 25.3984 23.6172 L 12.8828 23.6172 L 12.8828 23.5234 L 26.0078 7.7032 C 26.7578 6.8125 26.9453 6.2734 26.9453 5.5703 C 26.9453 4.2813 26.0547 3.4844 24.5078 3.4844 L 9.9297 3.4844 C 8.8047 3.4844 8.1719 4.0703 8.1719 5.1016 C 8.1719 6.1563 8.8047 6.7422 9.9297 6.7422 L 22.4219 6.7422 L 22.4219 6.8359 L 8.9922 23.0547 C 8.4531 23.6875 8.3125 24.1563 8.3125 24.8359 C 8.3125 26.0547 9.1797 26.8750 10.4922 26.8750 Z M 34.3047 39.4844 L 46.1172 39.4844 C 47.2188 39.4844 47.8281 38.9219 47.8281 37.8906 C 47.8281 36.9297 47.2188 36.3437 46.1172 36.3437 L 36.5078 36.3437 L 36.5078 36.25 L 46.5390 24.1563 C 47.3359 23.1953 47.5937 22.6563 47.5937 22 C 47.5937 20.7344 46.75 19.9610 45.25 19.9610 L 33.7422 19.9610 C 32.6641 19.9610 32.0312 20.5469 32.0312 21.5313 C 32.0312 22.5391 32.6641 23.1016 33.7422 23.1016 L 43.3281 23.1016 L 43.3281 23.1953 L 33.0156 35.6641 C 32.4063 36.3906 32.1953 36.8594 32.1953 37.5391 C 32.1953 38.6875 33.0156 39.4844 34.3047 39.4844 Z M 17.3828 52.5156 L 26.8516 52.5156 C 27.8594 52.5156 28.4453 51.9532 28.4453 51.0391 C 28.4453 50.1016 27.8594 49.5859 26.8516 49.5859 L 19.4453 49.5859 L 19.4453 49.4922 L 27.2266 40.0234 C 27.9766 39.1094 28.2109 38.5469 28.2109 37.8672 C 28.2109 36.7422 27.4375 36.1094 26.1719 36.1094 L 16.7969 36.1094 C 15.7890 36.1094 15.2266 36.6484 15.2266 37.5625 C 15.2266 38.5 15.7890 39.0391 16.7969 39.0391 L 24.3203 39.0391 L 24.3203 39.1094 L 16.1641 48.9531 C 15.6016 49.6563 15.4141 50.0547 15.4141 50.7110 C 15.4141 51.7656 16.1875 52.5156 17.3828 52.5156 Z">
+      </path>
+    </g>
+  </svg>
+`
+
+const repeatIcon = `
+  <svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000">
+  <g id="SVGRepo_iconCarrier">
+    <title>Repeat-Play</title>
+    <g id="Page-1" stroke-width="1" fill="none" fill-rule="evenodd">
+      <g id="Repeat-Play">
+        <path d="M5,18.0002 L17,18.0002 C18.6569,18.0002 20,16.657 20,15.0002 L20,14" id="Path"
+          stroke-width="2" stroke-linecap="round"> </path>
+        <path d="M16,2 L19.2929,5.29289 C19.6834,5.68342 19.6834,6.31658 19.2929,6.70711 L16,10" id="Path"
+          stroke-width="2" stroke-linecap="round"> </path>
+        <path d="M8,14 L4.70711,17.2929 C4.31658,17.6834 4.31658,18.3166 4.70711,18.7071 L8,22" id="Path"
+          stroke-width="2" stroke-linecap="round"> </path>
+        <path d="M19,6 L7,6 C5.34315,6 4,7.34315 4,9 L4,10" id="Path" stroke-width="2" stroke-linecap="round">
+        </path>
+      </g>
+    </g>
+  </g>
+  </svg>
+`
+
+const closeIcon = `
+<svg viewBox="-0.5 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+  <g id="SVGRepo_iconCarrier">
+    <path d="M3 21.32L21 3.32001" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    </path> 
+    <path d="M3 3.32001L21 21.32" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    </path> 
+  </g>
+</svg>
+`

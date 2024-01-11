@@ -56,8 +56,8 @@ router.post("/user/auth", UserController.auth)
 //cria novo user
 router.post("/user", UserController.store)
 
-//atualiza dados de user (recebe user id)
-// router.put("/user/:id", UserController.update)
+// atualiza dados de user(recebe user id)
+router.put("/user/:id", UserController.update)
 
 //deleta user (recebe user id)
 router.delete("/user/:id", UserController.delete)

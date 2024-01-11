@@ -10,14 +10,13 @@ const users = [
       nome: "Ada Lovelace",
       city: 'London',
       unit: 'K',
-      is24Hour: false,
+      is12Hour: false,
       title: 'Ms.',
       alarms: ["N1EMTNpZ"],
-      "settings": {
-        "overrideLang": null,
-        "hideSec": false,
-        "useNeutralTheme": false
-      }
+      "overrideLang": null,
+      "hideSec": false,
+      "useNeutralTheme": false
+
     },
   },
   {
@@ -31,14 +30,12 @@ const users = [
       nome: "Tim Berners Lee",
       city: 'London',
       unit: 'C',
-      is24Hour: false,
+      is12Hour: false,
       title: 'Sir.',
       alarms: ['N1EMTNpZ'],
-      "settings": {
-        "overrideLang": "en",
-        "hideSec": true,
-        "useNeutralTheme": true
-      }
+      "overrideLang": "en",
+      "hideSec": true,
+      "useNeutralTheme": true
     },
   },
   {
@@ -52,14 +49,12 @@ const users = [
       "nome": "Ferris Bueller",
       "city": "Chicago",
       "unit": "F",
-      "is24Hour": true,
+      "is12Hour": true,
       "title": "Mr.",
       "alarms": ['K1ferrNpJ'],
-      "settings": {
-        "overrideLang": "en",
-        "hideSec": true,
-        "useNeutralTheme": false
-      }
+      "overrideLang": "en",
+      "hideSec": true,
+      "useNeutralTheme": false
     }
   },
   {
@@ -73,14 +68,12 @@ const users = [
       "nome": "Vincent Vega",
       "city": "Los Angeles",
       "unit": "F",
-      "is24Hour": true,
+      "is12Hour": false,
       "title": "Mr.",
-      "alarms": ['O5vinPsX', 'N4vinRnZ', 'M3vinBeL', 'L2KvinqM', 'K1vinNpJ'],
-      "settings": {
-        "overrideLang": "en",
-        "hideSec": true,
-        "useNeutralTheme": false
-      }
+      "alarms": ['O5vinPsX', 'N4vinRnZ', 'M3vinBeL', 'L2KvinqM', 'K1vinNpJ', 'O5vinJsX'],
+      "overrideLang": "en",
+      "hideSec": true,
+      "useNeutralTheme": false
     }
   },
   {
@@ -92,16 +85,14 @@ const users = [
     "data": {
       "username": "mommy",
       "nome": "Beatrix Kiddo",
-      "city": "Los Angeles",
+      "city": "Tokyo",
       "unit": "C",
-      "is24Hour": true,
+      "is12Hour": true,
       "title": "Ms.",
       "alarms": ['O5HUWPsX', 'N4CFERnZ', 'M3WIOBeL', 'L2KSGRqM', 'QW7BGNpJ'],
-      "settings": {
-        "overrideLang": null,
-        "hideSec": false,
-        "useNeutralTheme": false
-      }
+      "overrideLang": null,
+      "hideSec": false,
+      "useNeutralTheme": false
     }
   }
 ]

@@ -73,6 +73,14 @@ class UserController {
     }
   }
 
+  update(req, res) {
+    const userUpdated = UserRepository.update(req.params.id, req.body)
+    res.status(200).json({
+      message: "user successfully updated",
+      userUpdated
+    })
+  }
+
   //delete
   delete(req, res) {
     UserRepository.delete(req.params.id)
