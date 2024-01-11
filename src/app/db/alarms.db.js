@@ -28,7 +28,7 @@ const alarms = [
     ringtone: 'Martial Arts Beat',
     isActive: true,
     isRepeating: true,
-    days: { sun: null, mon: true, tue: null, wed: true, thu: null, fri: true, sat: null },
+    days: { sun: true, mon: true, tue: true, wed: true, thu: true, fri: true, sat: true },
     isSnoozeEnabled: false,
     alarmTime: '16:45:00'
   },
@@ -39,7 +39,7 @@ const alarms = [
     ringtone: 'Mysterious Encounter',
     isActive: true,
     isRepeating: false,
-    days: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+    days: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: true },
     isSnoozeEnabled: true,
     alarmTime: '20:00:00'
   },
@@ -49,9 +49,9 @@ const alarms = [
     description: 'Reflexão Noturna',
     ringtone: 'Quiet Reflection',
     isActive: true,
-    isRepeating: false,
-    days: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
-    isSnoozeEnabled: false,
+    isRepeating: true,
+    days: { sun: true, mon: true, tue: true, wed: true, thu: true, fri: true, sat: true },
+    isSnoozeEnabled: true,
     alarmTime: '23:30:00'
   },
   {
@@ -61,7 +61,7 @@ const alarms = [
     ringtone: 'Marimba',
     isActive: true,
     isRepeating: false,
-    days: { sun: null, mon: true, tue: null, wed: null, thu: null, fri: null, sat: null },
+    days: { sun: true, mon: true, tue: true, wed: true, thu: true, fri: true, sat: true },
     isSnoozeEnabled: false,
     alarmTime: '08:30:00'
   },
@@ -124,6 +124,17 @@ const alarms = [
     id: 'O5vinPsX',
     refUserId: 'eok16lJm',
     description: 'A Caminho da Boate 🚗',
+    ringtone: 'Girl, You\'ll Be a Woman Soon',
+    isActive: true,
+    isRepeating: false,
+    days: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: true, sat: null },
+    isSnoozeEnabled: true,
+    alarmTime: '23:00:00'
+  },
+  {
+    id: 'O5vinJsX',
+    refUserId: 'eok16lJm',
+    description: 'A Caminho do Jack Rabbit 🚗',
     ringtone: 'Girl, You\'ll Be a Woman Soon',
     isActive: true,
     isRepeating: false,

@@ -13,8 +13,8 @@ class DateTimeRepository {
     return getMensagem(id)
   }
 
-  getTheme() {
-    return defineTheme()
+  getTheme(hour) {
+    return defineTheme(hour)
   }
 }
 
@@ -58,8 +58,8 @@ function getMensagem(userId = false) {
   }
   catch (err) {
     console.error('PQP', err)
-    user = 'Cine'
-    greeting = 'Sra.'
+    user = 'Usuário'
+    greeting = ''
   }
 
   const horarioCompleto = getHoraCerta()
@@ -77,18 +77,18 @@ function getMensagem(userId = false) {
   return `${msg}, ${greeting} ${user}`
 }
 
-function defineTheme() {
+function defineTheme(hour) {
   let theme
-  const horarioCompleto = getHoraCerta()
+  const horarioCompleto = hour !== 'false' ? hour : getHoraCerta()
   const [hora] = horarioCompleto.split(':')
 
-  if (hora >= 6 && hora < 12) {
+  if (+hora >= 6 && +hora < 12) {
     theme = "sunrise-theme"
   }
-  else if (hora >= 12 && hora < 18) {
+  else if (+hora >= 12 && +hora < 18) {
     theme = "noon-theme"
   }
-  else if (hora >= 18 && hora < 22) {
+  else if (+hora >= 18 && +hora < 22) {
     theme = "afternoon-theme"
   }
   else

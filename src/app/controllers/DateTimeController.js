@@ -18,7 +18,7 @@ class DateTime {
   }
 
   showTheme(req, res) {
-    const theme = DateTimeRepository.getTheme()
+    const theme = DateTimeRepository.getTheme(req.query.hour)
     res.status(200).json({ tema: theme })
   }
 }

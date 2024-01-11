@@ -5,7 +5,6 @@ class Weather {
     if (!req.query.city) { res.status(418).json({ message: 'not good my man' }) }
     else {
       const weather = await WeatherRepository.findByCity(req.query.city)
-      console.log(weather)
       res.status(200).json(weather)
     }
   }

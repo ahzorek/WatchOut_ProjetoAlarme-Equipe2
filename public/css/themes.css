@@ -10,6 +10,7 @@
     --night-600: rgb(37, 34, 58);
 
     /* paleta Afteroon */
+    --afternoon-50: rgb(249, 227, 156);
     --afternoon-100: rgba(255, 226, 127, 1);
     --afternoon-100t60: rgba(255, 226, 127, .6);
     --afternoon-200: rgba(251, 175, 85, 1);
@@ -55,9 +56,11 @@
     --very--light-drop-shadow:  0px 4px 10px rgba(60, 60, 60, 0.08);
     --very--light-drop-shadow-up:  0px -4px 10px rgba(60, 60, 60, 0.08);
     --border-radius-md: 1.02rem;
+    --border-radius-lg: 1.75rem;
 
     /* paddings, margins, sizes */
     --default-padding: 19px;
+    --settings-card-padding: 24px;
 }
 
 .afternoon-theme {
