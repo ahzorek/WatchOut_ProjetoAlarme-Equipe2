@@ -10,6 +10,10 @@ function getAlarmIndexById(id) {
   return alarms.findIndex(alarm => alarm.id == id)
 }
 
+function getAlarmsByUserRefId(id) {
+  return alarms.find(alarm => alarm.refUserId === id)
+}
+
 function getAlarms() {
   return alarms
 }
@@ -18,8 +22,6 @@ function getAlarms() {
 function addUser(newUser) {
   const id = nanoid(8)
   users.push({ id, ...newUser })
-  // console.log("USERS DB IS::", users)
-
   return users.find(user => user.id == id)
 }
 
@@ -28,7 +30,7 @@ function getUserById(id) {
 }
 
 function getUserByUsername(username) {
-  return users.find(user => user.username === username)
+  return users.find(user => user.credentials.username === username)
 }
 
 function getUserIndexById(id) {
@@ -43,6 +45,7 @@ export {
   getAlarmById,
   getAlarmIndexById,
   getAlarms,
+  getAlarmsByUserRefId,
   getUserById,
   getUserByUsername,
   getUserIndexById,
@@ -51,42 +54,5 @@ export {
 }
 
 //mock db
-const alarms = [
-  {
-    id: 'N1EMTNpZ',
-    description: 'Reunião de SCRUM',
-    ringtone: 'Marimba',
-    isActive: true,
-    isRepeating: false,
-    repeat: { sun: null, mon: true, tue: null, wed: null, thu: null, sex: null, sat: null },
-    isSnoozeEnabled: false,
-    alarmTime: '08:30'
-  },
-]
-
-const users = [
-  {
-    id: 'lzFc5iul',
-    username: "adalove",
-    password: "lovelace456",
-    nome: "Ada Lovelace",
-    city: 'London',
-    unit: 'celsius',
-    is24Hour: false,
-    gender: 'F',
-    title: 'Ms.',
-    alarms: ["N1EMTNpZ"]
-  },
-  {
-    id: '5H4fLoeB',
-    username: "tim",
-    password: "cernwww404",
-    nome: "Tim Berners Lee",
-    city: 'London',
-    unit: 'celsius',
-    is24Hour: false,
-    gender: 'M',
-    title: 'Sir.',
-    alarms: []
-  },
-]
+import alarms from './alarms.db.js'
+import users from './users.db.js'

@@ -2,9 +2,27 @@ import { getUserByUsername, getUserById, getUserIndexById, getUsers, addUser } f
 
 class UserRepository {
 
-  //CRUD
-  create(user) {
-    return addUser(user)
+  create({ username, password, nome = null, city, unit, is24Hour, title }) {
+    return addUser({
+      credentials: {
+        username,
+        password,
+      },
+      data: {
+        username,
+        nome: nome || username,
+        city,
+        unit,
+        is24Hour: is24Hour || true,
+        title,
+        alarms: [],
+        settings: {
+          overrideLang: null,
+          hideSec: true,
+          useNeutralTheme: false
+        }
+      },
+    })
   }
 
   findAll() {
@@ -22,9 +40,9 @@ class UserRepository {
   update(id, newData) {
     const userIndex = getUserIndexById(id)
     const users = getUsers()
-    const prevData = users[userIndex]
+    const prevData = users[userIndex].data
 
-    users[userIndex] = {
+    users[userIndex].data = {
       ...prevData,
       ...newData
     }

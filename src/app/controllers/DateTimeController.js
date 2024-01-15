@@ -13,8 +13,13 @@ class DateTime {
   }
 
   showMessage(req, res) {
-    const message = DateTimeRepository.getMessage()
-    res.status(200).json({ mensagem: message})
+    const message = DateTimeRepository.getMessage(req.query.id)
+    res.status(200).json({ mensagem: message })
+  }
+
+  showTheme(req, res) {
+    const theme = DateTimeRepository.getTheme(req.query.hour)
+    res.status(200).json({ tema: theme })
   }
 }
 

@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap');
+@import './custom-properties.css';
+
+:root {
+  --default-fonts: -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',sans-serif;
+}
+
+.title1 {
+  font-size: var(--font-title1-size);
+  line-height: var(--font-title1-line-height);
+}
+
+.title2 {
+  font-size: var(--font-title2-size);
+  line-height: var(--font-title2-line-height);
+}
+
+.title3 {
+  font-size: var(--font-title3-size);
+  line-height: var(--font-title3-line-height);
+}
+
+.large {
+  font-size: var(--font-large-size);
+  line-height: var(--font-large-line-height);
+}
+
+.base {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.small {
+  font-size: var(--font-small-size);
+  line-height: var(--font-small-line-height);
+}
+
+.micro {
+  font-size: var(--font-micro-size);
+  line-height: var(--font-micro-line-height);
+  text-transform: uppercase;
+}

@@ -130,4 +130,8 @@ dist
 .pnp.*
 
 
+# env trash
+
+*.DS_Store
 lab/
+public/js/app.js
