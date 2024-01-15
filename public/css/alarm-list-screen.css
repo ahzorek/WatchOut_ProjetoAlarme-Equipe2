@@ -1,0 +1,161 @@
+  .settings-card:has(input[type=checkbox]:checked) {
+    --color-dark: var(--color-600);
+    --color-light: var(--color-50);
+    background-color: var(--color-300);
+    background: var(--main-gradient);
+
+  }
+
+  .settings-card:has(input[type=checkbox]) {
+    --color-dark: black;
+    --color-light: white;
+    background-color: dimgray;
+    background: linear-gradient(to bottom, dimgray, dimgray);
+
+  }
+
+  .settings-card {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: .725rem;
+    width: calc(100% - calc(var(--default-padding) * 2));
+    max-width: 432px;
+    margin-inline: auto;
+    min-height: 157px;
+    border-radius: var(--border-radius-lg);
+    color: var(--color-light);
+    padding: var(--settings-card-padding);
+    transition: all 200ms ease-in-out;
+  }
+
+  .settings-card:active {
+    transform: scale(.98);
+  }
+
+  .settings-card section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .725rem;
+  }
+
+  .settings-card date {
+    font-size: 3rem;
+    font-weight: 500;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .settings-card .time-format-suffix{
+    font-size: .925rem;
+    background-color: var(--color-dark);
+    padding: 
+    calc(var(--default-padding) * .3) 
+    calc(var(--default-padding) * .4);
+    border-radius: 0.5rem;
+    align-self: center;
+  }
+
+  .settings-card .alarm-title {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  
+  }
+
+  .settings-card .alarm-icons {
+    flex-grow: 1;
+    display: flex;
+    gap: .5rem;
+  }
+
+  .settings-card .alarm-icons svg {
+    width: 1.4rem;
+    fill: var(--color-dark);
+    color: var(--color-dark);
+    stroke: var(--color-dark);
+  }
+
+  .settings-card .alarm-days {
+    display: flex;
+    gap: 5px;
+  }
+
+  .settings-card .alarm-days .tag-day {
+    background-color: var(--color-light);
+    color: var(--color-dark);
+    padding: .2rem .6rem;
+    border-radius: .5rem;
+    line-height: 20px;
+    font-size: .8rem;
+    font-weight: 600;
+  }
+
+  .settings-card .alarm-toggle {
+    justify-self: flex-end;
+  }
+
+  .switch {
+    appearance: none;
+    width: 51px;
+    height: 31px;
+    background: lightgray;
+    border-radius: 5rem;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    transition: all 200ms ease-in-out;
+  }
+
+  .switch:checked {
+    background: var(--color-dark);
+  }
+
+  .switch:checked:after {
+    background-color: var(--color-light);
+  }
+
+  .switch:after {
+    position: absolute;
+    content: "";
+    height: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background-color: rgb(250 250 250);
+    box-shadow: 0 0 .25em rgb(30 30 30/ .2);
+    transform: scale(.85);
+    left: 0;
+    transition: all 200ms ease-in-out;
+  }
+
+  .switch:checked:after {
+    left: calc(100% - 31px);
+  }
+
+  .settings-card .alarm-edit-btn{
+    opacity: 1;
+    aspect-ratio: 1;
+    width: 1.4rem;
+    color: var(--color-dark);
+    stroke: var(--color-dark);
+  }
+  
+  @media (hover: hover) {
+    .settings-card .alarm-edit-btn{
+      aspect-ratio: 1;
+      width: 1.4rem;
+      opacity: 0;
+      transition: all 100ms ease-in;
+    }
+    .settings-card:hover .alarm-edit-btn{
+      opacity: 1;
+      aspect-ratio: 1;
+      width: 1.4rem;
+      /* color: var(--color-dark); */
+      stroke: var(--color-dark);
+      cursor: pointer;
+    }
+    
+  }

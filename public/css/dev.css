@@ -1,0 +1,31 @@
+.ghost {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 35px;
+  aspect-ratio: 1;
+  margin-inline: auto;
+}
+.dev__mode {
+    border: 1px dashed orangered !important;
+
+    div {
+      border: 1px dotted red !important;
+    } 
+    section {
+      border: 1px dotted green !important;
+    } 
+    header {
+      border: 1px dotted magenta !important;
+    }
+    li {
+      border: 1px dotted khaki !important;
+    }
+    span {
+      border: 1px dotted blue !important;
+    }
+    h1, h2, h3, h4, p {
+      border: 1px dotted greenyellow !important;
+      
+    }
+  }

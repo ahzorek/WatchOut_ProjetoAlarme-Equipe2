@@ -3,10 +3,16 @@ console.log("sup") // sup
 //gerenciar estado da aplicação enquanto em execução
 const appState = {
   isFocused: true,
-  devStopped: null,
+  devStopped: false,
   isAlarmInitialized: false,
   currentScreen: 'dashboard',
   lastUpdated: null,
+  nextAlarm: {
+    obj: {},
+    time: {},
+    isSet: false,
+    hasFired: false
+  },
   timeNow: {
     h: null,
     m: null,
@@ -27,8 +33,53 @@ const appState = {
   updateLocalAlarmData: function (id, data) {
     const localIndex = this.user.alarms.findIndex(alarm => alarm.id == id)
     this.user.alarms[localIndex] = data
-  }
+  },
 
+  initAudioContext() {
+    this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
+  },
+
+  audioContext: null,
+  isPlaying: false,
+  source: null,
+  currentRingtone: null,
+
+
+  async playRingtone(alarm) {
+    if (!this.currentRingtone) {
+      this.currentRingtone = alarm
+    }
+    const { ringtone } = alarm
+    try {
+      const response = await fetch(`/audio/ringtones/${ringtone.slug}.${ringtone.format}`)
+      const data = await response.arrayBuffer()
+      const buffer = await this.audioContext.decodeAudioData(data)
+
+      this.source = this.audioContext.createBufferSource()
+      this.source.buffer = buffer
+      this.source.connect(this.audioContext.destination)
+
+      this.source.onended = () => {
+        if (this.isPlaying) {
+          this.playRingtone(this.currentRingtone)
+        }
+      }
+
+      this.source.start()
+      this.isPlaying = true
+
+    } catch (error) {
+      console.error('Error loading or playing audio file:', error)
+    }
+  },
+
+  stopRingtone() {
+    if (this.isPlaying && this.source) {
+      this.source.stop()
+      this.currentRingtone = null
+      this.isPlaying = false
+    }
+  }
 }
 
 //algumas constantes (pq nao?)
@@ -50,6 +101,7 @@ const alarmsBtn = document.getElementById('alarms')
 const settingsBtn = document.getElementById('settings')
 const closeButtons = document.querySelectorAll('.close-screen')
 const settingsForm = document.querySelector('.settings-form')
+const screens = document.querySelectorAll('.screen')
 
 document.addEventListener('visibilitychange', async () => {
   if (document.hidden) {
@@ -61,20 +113,21 @@ document.addEventListener('visibilitychange', async () => {
 })
 
 settingsBtn?.addEventListener('click', () => {
+  screens.forEach(screen => screen.classList.remove('active'))
   document.querySelector('.settings-screen').classList.add('active')
-  app.classList.add('settings')
 })
 
 alarmsBtn?.addEventListener('click', () => {
-  document.querySelector('.alarms-screen').classList.add('active')
-  app.classList.add('alarms')
+  const alarmScreen = document.querySelector('.alarms-screen')
+
+  screens.forEach(screen => screen.classList.remove('active'))
+  alarmScreen.classList.add('active')
 })
 
 function backToDashboard() {
   console.log('closing side screen')
-  document.querySelector('.settings-screen').classList.remove('active')
-  document.querySelector('.alarms-screen').classList.remove('active')
-  app.setAttribute('class', 'app')
+  screens.forEach(screen => screen.classList.remove('active'))
+  document.querySelector('.dashboard-screen').classList.add('active')
 
 }
 
@@ -93,6 +146,13 @@ document.addEventListener('keydown', (e) => {
 
 //improvisando queryparams para testes
 const params = new URLSearchParams(window.location.search)
+
+document.addEventListener('click', function () {
+  if (!appState.audioContext) {
+    appState.initAudioContext()
+    appState.audioContext.resume()
+  }
+})
 
 document.addEventListener('DOMContentLoaded', async () => {
   //carrega definições de usuário
@@ -126,6 +186,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       //roda o ajuste local do horario
       incrementClock(appState.timeNow)
 
+      //checa se ha alarme para disparar
+      checkForNextAlarm(appState.timeNow, appState.user.alarms)
+
       //mostra o horario correto apos ajuste local
       printTime(appState.timeNow)
     }
@@ -147,7 +210,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   renderSettingsScreen(appState.user)
 
-  renderAlarmCardsScreen(appState.user.alarms)
+  renderAlarmListScreen(appState.user.alarms)
 
   settingsForm.addEventListener('submit', (e) => handleSettingsChanges(e))
 
@@ -261,6 +324,7 @@ const splitTimeString = (currTime) => {
 
 const formatTime = (num) => String(num).padStart(2, '0')
 
+//é possivel refatorar essa função para extrair a atribuição de chamar a função renderDOM e fazer com que ela apenas 'retorne' a string html correta
 const printTime = ({ h, m, s }, forceUpdate, alarmView) => {
   let output, newRender
   const hour = appState.user.is12Hour && h > 12 ? (h - 12) : h // se o relógio for de 12h E se for depois das 12h, então hora = h - 12, se não hora = h
@@ -276,13 +340,11 @@ const printTime = ({ h, m, s }, forceUpdate, alarmView) => {
     //o novo render so ocorra em minutos cheios (04:20:00, por ex). porém, ao retomar o app de um periodo de hibernação,
     //sincronizamos o relogio com o servidor e queremos garantir que esse valor va pra tela imediatamente, ai entra a flag forceUpdate
     //se passado *true* como terceiro param para a função printTime, garante que o novo valor seja enviado para a tela
-    if (s === 0 | watchFace.innerHTML === '' | forceUpdate) {
-      output = `${(hour)}:${formatTime(min)}${appState.user.is12Hour ? suffixWrapper : ''}`
-      newRender = true
-    }
-    else if (alarmView) {
-      output = `${(hour)}:${formatTime(min)}${appState.user.is12Hour ? suffixWrapper : ''}`
-    }
+    output = `${(hour)}:${formatTime(min)}${appState.user.is12Hour ? suffixWrapper : ''}`
+
+    //aqui os casos que vão chamar um novo render: forceUpdate:true, caso seja um minuto cheio (s === 0) ou caso o relogio ainda não esteja preenchido (first render)
+    if (s === 0 | watchFace.innerHTML === '' | forceUpdate) newRender = true
+
   }
   //se os segundos são mostrados a atualização ocorre normalmente todo segundo (1000ms)
   else {
@@ -302,6 +364,7 @@ const printDate = (date) => {
   return
 }
 
+//possivel refatorar essa função para um sistema baseado em template/componente e não essas atirbuições individuais
 const printWeather = (weather, unit) => {
   const cityOut = document.querySelector('.city-name')
   const tempOut = document.querySelector('.temp')
@@ -323,6 +386,12 @@ const printWeather = (weather, unit) => {
   renderDOM(weatherIcon, 'src', tempIcon)
 }
 
+const getMessageFromServer = async (id) => {
+  const { mensagem } = await fetchContent(`/message?id=${id}`)
+  return mensagem
+}
+
+// possivel refatorar getTheme, getUser e getAlarms para reaproveitar o helper fetchContent (como ex acima função getMessageFromSever)
 const getTheme = async (timeStamp = false) => {
   const res = await fetch(`/theme?hour=${timeStamp}`)
   const { tema } = await res.json()
@@ -337,33 +406,28 @@ const getUser = async (userId) => {
   return data
 }
 
-// const getMessageFromServer = async (id) => {
-//   const res = await fetch(`/message?id=${id}`)
-//   const { mensagem } = await res.json()
-
-//   return mensagem
-// }
-
-const getMessageFromServer = async (id) => {
-  const { mensagem } = await fetchContent(`/message?id=${id}`)
-  return mensagem
-}
-
 const getAlarms = async (alarmId) => {
   const res = await fetch(`/alarm/${alarmId}`)
   const alarm = await res.json()
 
   return alarm
-
 }
 
+//talvez alterar essa atribuição de appState.user.alarms para um objeto direto na raiz de appState
 const initializeAlarms = async (user) => {
   console.log('initializing alarms for user,', user)
   appState.user = {
     ...user,
     alarms: await Promise.all(user.alarms.map(async (alarmId) => {
       const alarm = await getAlarms(alarmId)
-      return alarm
+      return {
+        ...alarm,
+        ringtone: {
+          title: 'Whistle',
+          slug: 'whistle',
+          format: 'mp3'
+        }
+      }
     }))
   }
   return
@@ -389,15 +453,16 @@ const formatTemperature = (celsius, out) => {
 }
 
 const turnOffAlarm = () => {
-  const alarmBox = document.getElementById('alarm-box-active')
-  alarmBox.addEventListener('transitionend', () => {
-    alarmBox.remove()
-  })
+  const alarmBox = document.getElementById('alarm-box')
+  // alarmBox.addEventListener('transitionend', () => {
+  //   alarmBox.remove()
+  // })
+  appState.stopRingtone()
   alarmBox.classList.remove('active')
 }
 
 const snoozeAlarm = () => {
-  const alarmBox = document.getElementById('alarm-box-active')
+  const alarmBox = document.getElementById('alarm-box')
   alarmBox.classList.remove('active')
 }
 
@@ -409,7 +474,66 @@ const handleAlarmActive = () => {
   snooze.addEventListener('click', snoozeAlarm)
 }
 
-handleAlarmActive()
+async function fireOffAlarm(alarm) {
+  const alarmBox = document.getElementById('alarm-box')
+  alarmBox.querySelector('.alarm-title').innerHTML = alarm.description
+  if (alarm.isSnoozeEnabled) {
+    alarmBox.querySelector('.snooze-btn').classList.add('display')
+  }
+  alarmBox.classList.add('active')
+
+  appState.playRingtone(alarm)
+
+  handleAlarmActive()
+}
+
+function handleAlarmDeactivation() {
+
+}
+
+function checkForNextAlarm({ h, m, s }, alarms) {
+  const activeAlarms = alarms.filter((alarm) => alarm.isActive)
+
+  if (activeAlarms.length === 0) return
+
+  const futureActiveAlarms = activeAlarms.filter(alarm => {
+    const [_h, _m] = alarm.alarmTime.split(':')
+    return ((+_h > h) || (+_h === h && +_m >= m))
+  })
+
+  if (futureActiveAlarms.length === 0) return
+
+  const orderedAlarms = futureActiveAlarms.sort((a, b) => {
+    const timeDifferenceA = calculateTimeDifference(a.alarmTime, h, m)
+    const timeDifferenceB = calculateTimeDifference(b.alarmTime, h, m)
+
+    return timeDifferenceA - timeDifferenceB
+  })
+
+  const [nextAlarm] = orderedAlarms
+  const nextAlarmTime = splitTimeString(nextAlarm.alarmTime)
+
+  if (compareTime({ h, m, s }, nextAlarmTime)) {
+    console.log('alarme ativou')
+    fireOffAlarm(nextAlarm)
+  }
+}
+
+function compareTime(currTime, alarmTime) {
+  // console.log('comparing time to alarm', currTime, alarmTime)
+  return JSON.stringify(currTime) === JSON.stringify(alarmTime)
+}
+
+function calculateTimeDifference(alarmTime, currentHour, currentMinute) {
+  const [alarmHour, alarmMinute] = alarmTime.split(':')
+  const totalMinutesAlarm = +alarmHour * 60 + +alarmMinute
+  const totalMinutesCurrent = currentHour * 60 + currentMinute
+
+  // calcula a diferença em minutos
+  // console.log(totalMinutesAlarm, totalMinutesCurrent, (totalMinutesAlarm - totalMinutesCurrent))
+
+  return Math.abs(totalMinutesAlarm - totalMinutesCurrent)
+}
 
 function renderDOM(element, outputType, value) {
   element[outputType] = value
@@ -425,7 +549,7 @@ async function handleSettingsChanges(e) {
   e.preventDefault()
 
   const userInfoEditing = {
-    // title: document.getElementById('formaTratamento').value,
+    title: document.getElementById('formaTratamento').value,
     nome: document.getElementById('nome').value,
     city: document.getElementById('city').value,
     unit: document.querySelector('input[name="unit"]:checked').value,
@@ -464,11 +588,16 @@ function renderSettingsScreen(user) {
   settings.innerHTML = ''
 
   //não é a forma ideal, mas funciona, POR ENQUANTO :)
+  //esse select vai ter que ser gerado dinamicamente, ou criar um dicionario para listar
+  //esses titles/tratamentos ou um endpoint que retorne eles
+  //ao gerar dinamicamente da pra verificar num if qual é o que o usuario tem selecionado
+  //e passar o atributo 'selected' pra essa option
+  //nao sei pq diabos eu usei um fieldset p cada campo, alguem me mate
   const template = `
     <fieldset>
       <h3 class="title3" >Tratamento</h3>
-      <select id="formaTratamento" name="formaTratamento">
-        <option selected disabled value="null">Selecione</option>
+      <select required id="formaTratamento" name="formaTratamento">
+        <option selected disabled>Selecione</option>
         <option value="sr">Sr.</option>
         <option value="sra">Sra.</option>
         <option value="srta">Srta.</option>
@@ -544,7 +673,7 @@ function renderSettingsScreen(user) {
   settings.innerHTML = template
 }
 
-function renderAlarmCardsScreen(alarms) {
+function renderAlarmListScreen(alarms) {
   const alarmsList = document.querySelector('.alarms-list')
   alarmsList.innerHTML = ''
 
@@ -559,6 +688,8 @@ function renderAlarmCardsScreen(alarms) {
     alarmCard.setAttribute('title', description)
     alarmCard.setAttribute('data-attribute-id', id)
 
+    //como a f printTime é reaproveitada aqui, adicionei nela a checagem pela flag alarmView
+    //é o terceiro param, aqui passado true
     alarmCard.innerHTML = `
       <section>
         <span class="alarm-time">
@@ -583,8 +714,19 @@ function renderAlarmCardsScreen(alarms) {
         <span class="alarm-days">
           ${displayDaysTag(days)}
         </span>
-        <span class="alarm-edit-btn">
-          editBtn
+        <span class="alarm-edit-btn" title="Edit alarm">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path
+                d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z"
+                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path
+                d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13"
+                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </g>
+          </svg>
         </span>
       </section>
     `
@@ -611,10 +753,11 @@ async function handleAlarmStatus({ id, checked }) {
     const data = await response.json()
 
     appState.updateLocalAlarmData(id, data)
+    appState.nextAlarm.isSet = false
 
   } catch (err) {
     console.error('Error:', err)
-    renderAlarmCardsScreen(appState.user.alarms)
+    renderAlarmListScreen(appState.user.alarms)
   }
 }
 
@@ -685,3 +828,10 @@ const closeIcon = `
   </g>
 </svg>
 `
+
+function devMode(activate) {
+  const allDOMNodes = Array.from(document.body.getElementsByTagName('*'))
+  if (activate) allDOMNodes.forEach(node => node.classList.add('dev__mode'))
+  else
+    allDOMNodes.forEach(node => node.classList.remove('dev__mode'))
+}
