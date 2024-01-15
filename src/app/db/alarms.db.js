@@ -19,7 +19,7 @@ const alarms = [
     isRepeating: false,
     days: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: true },
     isSnoozeEnabled: false,
-    alarmTime: '12:30:00'
+    alarmTime: '02:20:00'
   },
   {
     id: 'M3WIOBeL',
@@ -30,7 +30,7 @@ const alarms = [
     isRepeating: true,
     days: { sun: true, mon: true, tue: true, wed: true, thu: true, fri: true, sat: true },
     isSnoozeEnabled: false,
-    alarmTime: '16:45:00'
+    alarmTime: '15:57:00'
   },
   {
     id: 'N4CFERnZ',
@@ -41,7 +41,7 @@ const alarms = [
     isRepeating: false,
     days: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: true },
     isSnoozeEnabled: true,
-    alarmTime: '20:00:00'
+    alarmTime: '21:14:00'
   },
   {
     id: 'O5HUWPsX',
@@ -51,7 +51,7 @@ const alarms = [
     isActive: true,
     isRepeating: true,
     days: { sun: true, mon: true, tue: true, wed: true, thu: true, fri: true, sat: true },
-    isSnoozeEnabled: true,
+    isSnoozeEnabled: false,
     alarmTime: '23:30:00'
   },
   {
