@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ringtones List</title>
+</head>
+
+<body>
+  <ul id="ringtones-list">
+    <li>
+      <input type="radio" name="ringtone" id="ringtone1" value="whistle.mp3">
+      twisted nerve
+      <span class="play-button" onclick="toggleRingtone('whistle.mp3', this)">▶️</span>
+    </li>
+    <li>
+      <input type="radio" name="ringtone" id="ringtone2" value="cantaloop.mp3">
+      cantalook
+      <span class="play-button" onclick="toggleRingtone('cantaloop.mp3', this)">▶️</span>
+    </li>
+  </ul>
+
+  <script>
+    var currentAudio = null
+
+    function toggleRingtone(ringtone, button) {
+      if (currentAudio && !currentAudio.paused) {
+        currentAudio.pause()
+        setPlayIcon(button)
+        if (currentAudio.src.endsWith(ringtone)) {
+          currentAudio = null
+          return
+        }
+      }
+
+      currentAudio = new Audio(`/audio/ringtones/${ringtone}`)
+      currentAudio.play()
+      setStopIcon(button)
+    }
+
+    function setPlayIcon(button) {
+      button.innerHTML = '▶️'
+    }
+
+    function setStopIcon(button) {
+      button.innerHTML = '⏹️'
+    }
+  </script>
+</body>
+
+</html>
