@@ -3,6 +3,7 @@ import AlarmController from "./app/controllers/AlarmController.js"
 import WeatherController from "./app/controllers/WeatherController.js"
 import DateTimeController from "./app/controllers/DateTimeController.js"
 import UserController from "./app/controllers/UserController.js"
+import ServicesController from './app/controllers/ServicesController.js'
 
 const router = Router()
 
@@ -61,5 +62,10 @@ router.put("/user/:id", UserController.update)
 
 //deleta user (recebe user id)
 router.delete("/user/:id", UserController.delete)
+
+
+router.get("/autocomplete-city", ServicesController.complete)
+
+router.get("/woeid", ServicesController.woeid)
 
 export default router
