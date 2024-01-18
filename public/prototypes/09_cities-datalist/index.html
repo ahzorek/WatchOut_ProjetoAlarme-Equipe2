@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>City Search</title>
+</head>
+
+<body>
+  <label for="cityInput">Enter a city:</label>
+  <input type="text" id="cityInput" list="cities">
+  <button type="button" id="testBtn">testar</button>
+  <datalist id="cities"></datalist>
+
+  <output id="out"></output>
+
+  <script>
+    const cityInput = document.getElementById('cityInput');
+    const cityList = document.getElementById('cities');
+    const testButton = document.getElementById('testBtn')
+    const out = document.getElementById('out')
+
+    testButton.addEventListener('click', async () => {
+      const woeid = await testLocalApi(cityInput.value)
+
+      out.value = JSON.stringify(woeid)
+    })
+
+    async function testLocalApi(city) {
+      const url = `/woeid?city=${city}`
+      const res = await fetch(url)
+      const data = await res.json()
+
+      return data
+    }
+
+
+    let timeoutId
+
+    cityInput.addEventListener('input', function (event) {
+      // Clear previous timeout
+      clearTimeout(timeoutId)
+
+      timeoutId = setTimeout(async function () {
+        const inputText = event.target.value
+
+        if (inputText.length >= 3) {
+          try {
+            const { city } = await makeApiCall(inputText)
+
+            cityList.innerHTML = ''
+
+            const option = document.createElement('option')
+            option.innerText = city
+            option.value = city
+
+            cityList.appendChild(option)
+
+          } catch (error) {
+            console.error('Error fetching data:', error)
+          }
+        }
+      }, 300)
+    })
+
+    async function makeApiCall(query) {
+      const autoCompleteApi = '/autocomplete-city?str='
+      const response = await fetch(autoCompleteApi + query)
+      const data = await response.json()
+
+      console.log(data)
+      return data
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html class="noon-theme">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Alarm</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="create-alarm-screen.css">
+  <script src="../../js/utils/timePicker.js" defer></script>
+</head>
+
+<body>
+  <!-- wrapper app -->
+  <div class="app">
+
+    <!-- tela settings -->
+    <section class="screen settings-screen">
+      <header class="top-nav side-screen">
+        <h2 class="title1">Settings</h2>
+        <button class="close-screen">
+          <svg viewBox="-0.5 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path d="M3 21.32L21 3.32001" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+              </path>
+              <path d="M3 3.32001L21 21.32" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+              </path>
+            </g>
+          </svg>
+        </button>
+      </header>
+      <form class="settings-form">
+        <div class="settings-items">
+          <!-- renderiza itens aqui -->
+        </div>
+        <section class="btns">
+          <button type="submit">Salvar e Atualizar</button>
+          <button type="button">Cancelar Mudanças</button>
+        </section>
+      </form>
+    </section>
+    <!-- tela settings -->
+
+    <!-- tela lista alarmes -->
+    <section class="screen alarms-screen">
+      <header class="top-nav side-screen">
+        <h2 class="title1">Alarms</h2>
+        <button class="close-screen">
+          <svg viewBox="-0.5 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path d="M3 21.32L21 3.32001" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+              </path>
+              <path d="M3 3.32001L21 21.32" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+              </path>
+            </g>
+          </svg>
+        </button>
+      </header>
+      <ul class="alarms-list">
+        <!-- renderiza itens aqui -->
+      </ul>
+    </section>
+    <!-- tela lista alarmes -->
+
+    <!-- tela criar alarmes -->
+    <section class="screen create-alarm-screen active">
+      <header class="top-nav side-screen">
+        <h2 class="title1">New Alarm</h2>
+        <button class="close-screen">
+          <svg viewBox="-0.5 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path d="M3 21.32L21 3.32001" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+              </path>
+              <path d="M3 3.32001L21 21.32" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+              </path>
+            </g>
+          </svg>
+        </button>
+      </header>
+      <form class="create-alarm-form">
+
+        <div>
+          <h3 class="title3">Descrição</h3>
+          <input id="descr" type="text" name="descr" placeholder="Jantar Importante" />
+        </div>
+
+        <div>
+          <h3 class="title3">Horário</h3>
+          <div class="hour-selector">
+            <div class="hour" id="hour"></div>
+            <div class="minute" id="minute"></div>
+            <div class="suffix" id="suffix"></div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="title3">Ativado</h3>
+          <div class="segmented-picker">
+            <input value="true" id="hide" type="radio" name="isActive" checked />
+            <label for="hide"><span>Sim</span></label>
+            <input value="false" id="show" type="radio" name="isActive" />
+            <label for="show"><span>Não</span></label>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="title3">Snooze</h3>
+          <div class="segmented-picker">
+            <input value="true" id="is12hour" type="radio" name="isSnoozeEnabled" checked />
+            <label for="is12hour"><span>Sim</span></label>
+            <input value="false" id="is24hour" type="radio" name="isSnoozeEnabled" />
+            <label for="is24hour"><span>Não</span></label>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="title3">Repetir</h3>
+          <div class="segmented-picker">
+            <input value="true" id="yes" type="radio" name="isRepeating" checked />
+            <label for="yes"><span>Sim</span></label>
+            <input value="false" id="no" type="radio" name="isRepeating" />
+            <label for="no"><span>Não</span></label>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="title3">Dias</h3>
+          <fieldset class="checkbox-group">
+            <div class="checkbox">
+              <label class="checkbox-wrapper">
+                <input type="checkbox" class="checkbox-input" />
+                <span class="checkbox-tile">
+                  <span class="checkbox-label">Sun</span>
+                </span>
+              </label>
+            </div>
+            <div class="checkbox">
+              <label class="checkbox-wrapper">
+                <input type="checkbox" class="checkbox-input" checked />
+                <span class="checkbox-tile">
+                  <span class="checkbox-label">Mon</span>
+                </span>
+              </label>
+            </div>
+            <div class="checkbox">
+              <label class="checkbox-wrapper">
+                <input type="checkbox" class="checkbox-input" />
+                <span class="checkbox-tile">
+                  <span class="checkbox-label">Tue</span>
+                </span>
+              </label>
+            </div>
+            <div class="checkbox">
+              <label class="checkbox-wrapper">
+                <input type="checkbox" class="checkbox-input" />
+                <span class="checkbox-tile">
+                  <span class="checkbox-label">Wed</span>
+                </span>
+              </label>
+            </div>
+            <div class="checkbox">
+              <label class="checkbox-wrapper">
+                <input type="checkbox" class="checkbox-input" />
+                <span class="checkbox-tile">
+                  <span class="checkbox-label">Thu</span>
+                </span>
+              </label>
+            </div>
+            <div class="checkbox">
+              <label class="checkbox-wrapper">
+                <input type="checkbox" class="checkbox-input" />
+                <span class="checkbox-tile">
+                  <span class="checkbox-label">Fri</span>
+                </span>
+              </label>
+            </div>
+            <div class="checkbox">
+              <label class="checkbox-wrapper">
+                <input type="checkbox" class="checkbox-input" />
+                <span class="checkbox-tile">
+                  <span class="checkbox-label">Sat</span>
+                </span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div>
+          <h3 class="title3">Toque</h3>
+          <select id="defaultRingtone" name="defaultRingtone">
+            <option selected disabled value="null">Selecione</option>
+          </select>
+        </div>
+
+      </form>
+    </section>
+    <!-- tela lista alarmes -->
+
+    <!-- começo dasboard -->
+    <section class="screen dashboard-screen">
+      <!-- box cidade/clima -->
+      <section class="weather-card">
+        <div class="weather-info">
+          <div class="city-name">Cidade</div>
+          <div class="temp"></div>
+          <span class="weather-tags">
+            <span>
+              min <span class="min-span"></span>
+            </span>
+            <span>
+              max <span class="max-span"></span>
+            </span>
+          </span>
+        </div>
+        <img alt="weather icon" class="weather-icon">
+      </section>
+
+      <!-- mensagem + relogio (watchface) + data principal -->
+      <main class="time-date-container">
+        <p class="greeting-message title3"></p>
+        <time datetime="" class="time"></time>
+        <p class="date"></p>
+      </main>
+
+    </section>
+    <!-- fim dashboard -->
+
+    <!-- menu inferior-->
+    <nav class="navigation">
+      <ul>
+        <li class="btn secondary-btn" id="alarms">
+          <svg class="svg-inline--fa fa-bell" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="bell"
+            role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg="">
+            <path fill="currentColor"
+              d="M224 0c-17.7 0-32 14.3-32 32V51.2C119 66 64 130.6 64 208v18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416H416c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z">
+            </path>
+          </svg>
+          <h4>Alarms</h4>
+        </li>
+        <li class="btn primary-btn">
+          <svg class="svg-inline--fa fa-plus" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus"
+            role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg="">
+            <path fill="currentColor"
+              d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z">
+            </path>
+          </svg>
+          <!-- <h4>Novo</h4> -->
+        </li>
+        <li class="btn secondary-btn" id="settings">
+          <svg class="svg-inline--fa fa-sliders" aria-hidden="true" focusable="false" data-prefix="fas"
+            data-icon="sliders" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+            <path fill="currentColor"
+              d="M0 416c0 17.7 14.3 32 32 32l54.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 448c17.7 0 32-14.3 32-32s-14.3-32-32-32l-246.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 384c-17.7 0-32 14.3-32 32zm128 0a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM320 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm32-80c-32.8 0-61 19.7-73.3 48L32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l246.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48l54.7 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-54.7 0c-12.3-28.3-40.5-48-73.3-48zM192 128a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm73.3-64C253 35.7 224.8 16 192 16s-61 19.7-73.3 48L32 64C14.3 64 0 78.3 0 96s14.3 32 32 32l86.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 128c17.7 0 32-14.3 32-32s-14.3-32-32-32L265.3 64z">
+            </path>
+          </svg>
+          <h4>Settings</h4>
+        </li>
+      </ul>
+    </nav>
+    <!-- menu inferior-->
+  </div>
+
+</body>
+
+</html>
