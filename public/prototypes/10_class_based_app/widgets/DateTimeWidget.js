@@ -6,12 +6,10 @@ class DateTimeWidget {
     this.container = container
     this.mainElement = this.createStructure()
 
-    // Retrieve references to individual elements
     this.greetingMessage = this.mainElement.querySelector('.greeting-message')
     this.timeElement = this.mainElement.querySelector('.time')
     this.dateElement = this.mainElement.querySelector('.date')
 
-    // Append the main element to the container
     this.container.appendChild(this.mainElement)
 
     this.renderClock()
@@ -61,11 +59,6 @@ class DateTimeWidget {
     if (this.app.isLoading) {
       return `<div class="loading-spinner"></div>`
     } else {
-      // Update individual elements
-      // this.updateGreetingMessage()
-      // this.updateTime()
-      // this.updateDate()
-
       return this.mainElement
     }
   }
