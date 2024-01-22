@@ -33,6 +33,7 @@ class UserController {
 
   //basic auth user
   auth(req, res) {
+    console.log(req.headers)
     const { username, password } = req.body
     if (!username || !password) {
       res.status(406).json({ message: 'missing data, check it again' })
@@ -43,11 +44,11 @@ class UserController {
       res.status(418).json({ message: 'username does not match' })
       return
     }
-    else if (user.credentials.password === password) {
-      res.status(200).json({ message: 'success', id: user.id })
+    else if (user.credentials.password !== password) {
+      res.status(401).json({ message: 'password doest not match' })
     }
     else
-      res.status(401).json({ message: 'password doest not match' })
+      res.status(200).json({ message: 'success', id: user.id, redirect: '/dashboard' })
   }
 
   //save new
@@ -75,9 +76,32 @@ class UserController {
 
   update(req, res) {
     const userUpdated = UserRepository.update(req.params.id, req.body)
+
     res.status(200).json({
       message: "user successfully updated",
-      userUpdated
+      user: userUpdated.data
+    })
+  }
+
+  insert(req, res) {
+    const { id } = req.params
+    const { alarmId } = req.body
+    const userWithNewAlarm = UserRepository.insertAlarm(id, alarmId)
+
+    res.status(200).json({
+      message: "user successfully updated",
+      user: userWithNewAlarm
+    })
+  }
+
+  patch(req, res) {
+    const { id } = req.params
+    const { attribute, data } = req.body
+    const userUpdated = UserRepository.updateAttribute(id, attribute, data)
+
+    res.status(200).json({
+      message: "user successfully updated",
+      user: userUpdated
     })
   }
 

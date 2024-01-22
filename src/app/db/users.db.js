@@ -16,7 +16,6 @@ const users = [
       "overrideLang": null,
       "hideSec": false,
       "useNeutralTheme": false
-
     },
   },
   {
@@ -69,8 +68,8 @@ const users = [
       "city": "Los Angeles",
       "unit": "F",
       "is12Hour": false,
-      "title": "Mr.",
-      "alarms": ['O5vinPsX', 'N4vinRnZ', 'M3vinBeL', 'L2KvinqM', 'K1vinNpJ', 'O5vinJsX'],
+      "title": "Amigo",
+      "alarms": ['N4vinRnZ', 'M3vinBeL', 'L2KvinqM', 'K1vinNpJ', 'O5vinJsX'],
       "overrideLang": "en",
       "hideSec": true,
       "useNeutralTheme": false
