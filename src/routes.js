@@ -18,17 +18,17 @@ router.get('/', (req, res) => {
     res.status(301).redirect('/dashboard')
 })
 
-router.get('/login', (req, res) => {
-    const filePath = path.join(__dirname, 'views', 'login', 'index.html')
+// router.get('/login', (req, res) => {
+//     const filePath = path.join(__dirname, 'views', 'login', 'index.html')
 
-    res.sendFile(filePath)
-})
+//     res.sendFile(filePath)
+// })
 
-router.get('/dashboard', (req, res) => {
-    const filePath = path.join(__dirname, 'views', 'dashboard', 'index.html')
+// router.get('/dashboard', (req, res) => {
+//     const filePath = path.join(__dirname, 'views', 'dashboard', 'index.html')
 
-    res.sendFile(filePath)
-})
+//     res.sendFile(filePath)
+// })
 
 //retorna clima pelo nome da cidade em query param (?city=)
 router.get("/weather", WeatherController.show)
