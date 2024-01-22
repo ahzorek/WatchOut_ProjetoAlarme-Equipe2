@@ -121,17 +121,6 @@ const alarms = [
     alarmTime: '21:30:00'
   },
   {
-    id: 'O5vinPsX',
-    refUserId: 'eok16lJm',
-    description: 'A Caminho da Boate 🚗',
-    ringtone: 'Girl, You\'ll Be a Woman Soon',
-    isActive: true,
-    isRepeating: false,
-    days: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: true, sat: null },
-    isSnoozeEnabled: true,
-    alarmTime: '23:00:00'
-  },
-  {
     id: 'O5vinJsX',
     refUserId: 'eok16lJm',
     description: 'A Caminho do Jack Rabbit 🚗',

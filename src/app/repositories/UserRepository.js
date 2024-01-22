@@ -37,14 +37,36 @@ class UserRepository {
     return getUserByUsername(username)
   }
 
-  update(id, newData) {
+  updateAttribute(id, attribute, data) {
+    const userIndex = getUserIndexById(id)
+    const users = getUsers()
+    const prevData = users[userIndex].data
+
+    if (attribute === 'alarms') {
+      prevData.alarms.push(data.id)
+    }
+
+    return users[userIndex]
+
+  }
+
+  insertAlarm(id, alarmId) {
+
+    console.log(id, alarmId)
+    const user = getUserById(id)
+    user.data.alarms.push(alarmId)
+
+    return user.data
+  }
+
+  update(id, rawData) {
     const userIndex = getUserIndexById(id)
     const users = getUsers()
     const prevData = users[userIndex].data
 
     users[userIndex].data = {
       ...prevData,
-      ...newData
+      ...rawData
     }
     return users[userIndex]
   }

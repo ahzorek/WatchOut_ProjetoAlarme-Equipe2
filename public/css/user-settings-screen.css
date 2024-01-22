@@ -1,23 +1,22 @@
-.settings-form {
-  padding: var( --default-padding) calc(2 * var( --default-padding)) ;
+form {
+  padding: var(--default-padding) calc(2 * var(--default-padding));
   display: flex;
   flex-direction: column;
   gap: 2rem;
   color: white;
+  max-width: calc(432px + calc(2* var(--default-padding)));
+  margin-inline: auto;
 }
 
-.settings-form fieldset {
+form fieldset {
   border: none;
 }
 
-.settings-form h3 {
-  margin-bottom: .8rem;
-}
-
-.settings-form input[type=text], .settings-form select{
+form input[type=text],
+form input[type=password],
+form select {
   border: none;
   width: 100%;
-  /* height: 32px; */
   font-size: 1rem;
   background-color: rgb(118 118 128 / .24);
   color: rgb(255 255 255);
@@ -26,117 +25,118 @@
   overflow: hidden;
 }
 
+form select {
+  border-right: 10px solid transparent
+}
+
 .settings-items {
   display: contents;
 }
 
-/* segmented picker */
+.settings-items:has(h3){
+  & h3 {
+    margin-block-end: 1rem;
+  }
+}
 
-.segmented-picker {
-  align-items: center;
-  background-color: rgb(118 118 128 / .24);
-  color: rgb(255 255 255);
-  border-radius: 8px;
-  display: flex;
-  overflow: hidden;
-  padding: 2px;
-  width: auto;
+form {
+  & button {
+    border: none;
+    width: 100%;
+    font-size: 1rem;
+    background-color: rgb(118, 118, 128, 0.24);
+    color: rgb(255, 255, 255);
+    padding: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: background-color 300ms, transform 200ms;
 
-  & > input {
-    pointer-events: none;
-    position: absolute;
-    visibility: hidden;
-
-    &:nth-last-of-type(1):checked ~ label:last-of-type::before {
-      left: 0;
-    }
-
-    &:nth-last-of-type(2):checked ~ label:last-of-type::before {
-      left: -100%;
-    }
-
-    &:nth-last-of-type(3):checked ~ label:last-of-type::before {
-      left: -200%;
-    }
-
-    /* &:nth-last-of-type(4):checked ~ label:last-of-type::before {
-      left: -300%;
-    }
-
-    &:nth-last-of-type(5):checked ~ label:last-of-type::before {
-      left: -400%;
-    }
-
-    &:nth-last-of-type(6):checked ~ label:last-of-type::before {
-      left: -500%;
-    }
-
-    &:nth-last-of-type(7):checked ~ label:last-of-type::before {
-      left: -600%;
-    }
-
-    &:nth-last-of-type(8):checked ~ label:last-of-type::before {
-      left: -700%;
-    }
-
-    &:nth-last-of-type(9):checked ~ label:last-of-type::before {
-      left: -800%;
-    } */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
   }
 
-  & > label {
-    align-items: center;
-    cursor: pointer;
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    padding: 8px;
-    position: relative;
+  & .icon {
+    margin-left: -3rem;
+  }
 
-    & > span {
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.02em;
-      position: relative;
-      z-index: 2;
-    }
+  & button:hover {
+    background-color: rgb(118, 118, 128, 0.4);
+  }
 
-    &:not(:first-of-type) {
-      &::after {
-        /* // divider */
+  & button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+  }
 
-        background-color: rgb(0, 0, 0, 4%);
-        content: "";
-        display: block;
-        height: 16px;
-        left: 0;
-        position: absolute;
-        width: 1px;
-        z-index: 0;
+  & button.success {
+    background-color: #4caf50;
+
+    & .success-icon {
+      opacity: 1;
+
+      & .checkmark {
+        stroke: white;
+        stroke-dashoffset: 745.74853515625;
+        stroke-dasharray: 745.74853515625;
+        animation: dash 2s ease-out forwards;
       }
     }
+  }
 
-    &:last-of-type {
-      &::before {
-        /* // Moving selection background
-        // This needs to be based on the last item, because CSS can
-        // only reference subsequent siblings. */
+  & button.error {
+    background-color: #ff4d4d;
+    animation: shake 0.5s ease-in-out;
+  }
 
-        background-color: rgb(99, 99, 102);
-        border-radius: 6px;
-        /* box-shadow:  */
-        /* 0 2px 6px rgb(20, 20, 20),  */
-        /* 0 0 0 2px rgb(10 10 10 / .1); */
-        content: "";
-        display: block;
-        height: 100%;
-        left: 0;
-        position: absolute;
-        top: 0;
-        transition: 250ms ease;
-        width: 100%;
-        z-index: 1;
-      }
+  & button.loading {
+    & .loading-spinner {
+      opacity: 1;
     }
+  }
+
+  & .loading-spinner,
+  .success-icon {
+    width: 2rem;
+    height: 2rem;
+    opacity: 0;
+    transition: opacity 300ms;
+    scale: .8;
+  }
+}
+
+/* Shake Animation for Error */
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 745.74853515625;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
   }
 }

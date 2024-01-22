@@ -18,6 +18,12 @@ function getAlarms() {
   return alarms
 }
 
+function addAlarm(newAlarm) {
+  const id = nanoid(10)
+  alarms.push({ id, ...newAlarm })
+  return alarms.find(alarm => alarm.id == id)
+}
+
 //users
 function addUser(newUser) {
   const id = nanoid(8)
@@ -46,6 +52,7 @@ export {
   getAlarmIndexById,
   getAlarms,
   getAlarmsByUserRefId,
+  addAlarm,
   getUserById,
   getUserByUsername,
   getUserIndexById,

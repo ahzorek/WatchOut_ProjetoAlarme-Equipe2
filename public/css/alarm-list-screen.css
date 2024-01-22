@@ -30,7 +30,10 @@
   }
 
   .settings-card:active {
-    transform: scale(.98);
+    transform: scale(.94);
+    animation: vibrate-1 0.3s linear infinite both;
+    -webkit-animation: vibrate-1 0.3s linear infinite both;
+
   }
 
   .settings-card section {
@@ -47,12 +50,11 @@
     gap: 0.5rem;
   }
 
-  .settings-card .time-format-suffix{
+  .settings-card .time-format-suffix {
     font-size: .925rem;
     background-color: var(--color-dark);
-    padding: 
-    calc(var(--default-padding) * .3) 
-    calc(var(--default-padding) * .4);
+    padding:
+      calc(var(--default-padding) * .3) calc(var(--default-padding) * .4);
     border-radius: 0.5rem;
     align-self: center;
   }
@@ -62,7 +64,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  
+
   }
 
   .settings-card .alarm-icons {
@@ -134,28 +136,33 @@
     left: calc(100% - 31px);
   }
 
-  .settings-card .alarm-edit-btn{
+  .settings-card .alarm-edit-btn {
     opacity: 1;
     aspect-ratio: 1;
-    width: 1.4rem;
-    color: var(--color-dark);
-    stroke: var(--color-dark);
+    width: 1.8rem;
+    background-color: var(--color-dark);
+    padding: 0.1rem 0.1rem 0.2rem 0.2rem;
+    stroke: var(--color-light);
+    border-radius: .5rem;
   }
-  
+
   @media (hover: hover) {
-    .settings-card .alarm-edit-btn{
+    .settings-card .alarm-edit-btn {
       aspect-ratio: 1;
       width: 1.4rem;
       opacity: 0;
       transition: all 100ms ease-in;
     }
-    .settings-card:hover .alarm-edit-btn{
+
+    .settings-card:hover .alarm-edit-btn {
       opacity: 1;
       aspect-ratio: 1;
-      width: 1.4rem;
-      /* color: var(--color-dark); */
-      stroke: var(--color-dark);
+      width: 1.5rem;
+      background-color: var(--color-dark);
+      padding: 0.15rem 0.15rem 0.2rem 0.2rem;
+      stroke: var(--color-light);
       cursor: pointer;
+      border-radius: 0.3rem;
     }
-    
+
   }

@@ -7,7 +7,7 @@ class Alarm {
     const alarms = AlarmRepository.findAll()
     res.status(200).json(alarms)
   }
-  
+
   //find by id
   show(req, res) {
     const alarm = AlarmRepository.findById(req.params.id)
@@ -16,14 +16,27 @@ class Alarm {
 
   //save new
   store(req, res) {
-    AlarmRepository.create({}) // definir objeto aqui
-    res.status(201).send("Alarme cadastrado com sucesso")
+    if (!req.body.refUserId) res.status(406).json({ message: 'missing data, check it again' })
+
+    const alarmCreated = AlarmRepository.create(req.body)
+    res.status(201).json({
+      message: "Alarme cadastrado com sucesso",
+      alarmId: alarmCreated.id,
+      data: alarmCreated
+    })
   }
 
   //update
   update(req, res) {
     const alarm = AlarmRepository.update(req.params.id, req.body)
     res.status(200).json(alarm)
+  }
+
+  //update
+  patch(req, res) {
+    const alarm = AlarmRepository.toggle(req.params.id)
+    console.log(alarm)
+    res.status(200).json({ message: 'successfully toggled alarm', alarm })
   }
 
   //delete

@@ -1,14 +1,33 @@
 import { Router } from "express"
+import path from 'path'
 import AlarmController from "./app/controllers/AlarmController.js"
 import WeatherController from "./app/controllers/WeatherController.js"
 import DateTimeController from "./app/controllers/DateTimeController.js"
 import UserController from "./app/controllers/UserController.js"
+import ServicesController from './app/controllers/ServicesController.js'
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname)
 const router = Router()
 
 //rota teste 
 router.get("/test", (req, res) => {
     res.json("foi")
+})
+
+router.get('/', (req, res) => {
+    res.status(301).redirect('/dashboard')
+})
+
+router.get('/login', (req, res) => {
+    const filePath = path.join(__dirname, 'views', 'login', 'index.html')
+
+    res.sendFile(filePath)
+})
+
+router.get('/dashboard', (req, res) => {
+    const filePath = path.join(__dirname, 'views', 'dashboard', 'index.html')
+
+    res.sendFile(filePath)
 })
 
 //retorna clima pelo nome da cidade em query param (?city=)
@@ -38,6 +57,9 @@ router.post("/alarm", AlarmController.store)
 //atualiza dados de alarme (recebe alarm id)
 router.put("/alarm/:id", AlarmController.update)
 
+//atualiza dados de alarme (apenas atributo isActive)
+router.patch("/alarm/:id", AlarmController.patch)
+
 //deleta alarme (recebe user id)
 router.delete("/alarm/:id", AlarmController.delete)
 
@@ -59,7 +81,15 @@ router.post("/user", UserController.store)
 // atualiza dados de user(recebe user id)
 router.put("/user/:id", UserController.update)
 
+// atualiza dados de user(UM ATRIBUTO)
+router.patch("/user/:id", UserController.insert)
+
 //deleta user (recebe user id)
 router.delete("/user/:id", UserController.delete)
+
+
+router.get("/autocomplete-city", ServicesController.complete)
+
+router.get("/woeid", ServicesController.woeid)
 
 export default router

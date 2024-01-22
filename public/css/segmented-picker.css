@@ -1,0 +1,80 @@
+/* segmented picker */
+
+.segmented-picker {
+  align-items: center;
+  background-color: rgb(118 118 128 / .24);
+  color: rgb(255 255 255);
+  border-radius: 8px;
+  display: flex;
+  overflow: hidden;
+  padding: 2px;
+  width: auto;
+
+  & > input {
+    pointer-events: none;
+    position: absolute;
+    visibility: hidden;
+
+    &:nth-last-of-type(1):checked ~ label:last-of-type::before {
+      left: 0;
+    }
+
+    &:nth-last-of-type(2):checked ~ label:last-of-type::before {
+      left: -100%;
+    }
+
+    &:nth-last-of-type(3):checked ~ label:last-of-type::before {
+      left: -200%;
+    }
+    
+  }
+
+  & > label {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    padding: 8px;
+    position: relative;
+
+    & > span {
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      position: relative;
+      z-index: 2;
+    }
+
+    &:not(:first-of-type) {
+      &::after {
+         /* divider */
+        background-color: rgb(0, 0, 0, 4%);
+        content: "";
+        display: block;
+        height: 16px;
+        left: 0;
+        position: absolute;
+        width: 1px;
+        z-index: 0;
+      }
+    }
+
+    &:last-of-type {
+      &::before {
+        /* Moving selection background */
+        background-color: rgb(99, 99, 102);
+        border-radius: 6px;
+        content: "";
+        display: block;
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        transition: 250ms ease;
+        width: 100%;
+        z-index: 1;
+      }
+    }
+  }
+}
