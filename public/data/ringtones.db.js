@@ -10,7 +10,7 @@ const rigntonesList = [
     "title": "Addio Cheyenne"
   },
   {
-    "slug": "american_p****",
+    "slug": "american",
     "format": ".mp3",
     "title": "American P****"
   },
