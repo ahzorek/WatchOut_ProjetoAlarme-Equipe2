@@ -1,0 +1,148 @@
+<!DOCTYPE html class="neutral-theme">
+<html class="sunrise-theme">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/animations.css">
+</head>
+
+<body>
+  <div class="app">
+    <div class="screen active">
+      <div class="login-container">
+        <form>
+          <h1 class="title">Login</h1>
+          <input autocapitalize="none" placeholder="Username" type="text" id="username" name="username" required>
+
+          <input placeholder="Password" type="password" id="password" name="password" required>
+
+          <button class="" type="submit">
+            <div class="loading-spinner icon"></div>
+            <div class="success-icon icon">
+              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 98.5 98.5"
+                enable-background="new 0 0 98.5 98.5" xml:space="preserve">
+                <path class="checkmark" fill="none" stroke-width="6" stroke-miterlimit="10"
+                  d="M81.7,17.8C73.5,9.3,62,4,49.2,4
+            	C24.3,4,4,24.3,4,49.2s20.3,45.2,45.2,45.2s45.2-20.3,45.2-45.2c0-8.6-2.4-16.6-6.5-23.4l0,0L45.6,68.2L24.7,47.3" />
+              </svg>
+            </div>
+            <span class="btn-text">Login</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    const form = document.querySelector('form')
+    const button = form.querySelector('button')
+    const btnText = button.querySelector('span')
+
+    const credentials = {
+      username: null,
+      password: null
+    }
+
+    const handleInput = (e) => {
+      if (e.target.value) {
+        let key = e.target.id
+        let value = e.target.value.trim()
+        setCredentials(key, value)
+      }
+    }
+
+    const setCredentials = (key, value) => {
+      credentials[key] = value
+    }
+
+    const handleSubmit = async (e) => {
+      e.preventDefault()
+      setButton('loading')
+
+      setTimeout(() => {
+        authUser(credentials)
+      }, 600)
+
+
+      const animationEndHandler = () => {
+        setButton()
+        button.removeEventListener('animationend', animationEndHandler)
+      }
+
+      button.addEventListener('animationend', animationEndHandler)
+    }
+
+
+    document.querySelector('#username').addEventListener('keyup', handleInput)
+    document.querySelector('#password').addEventListener('keyup', handleInput)
+
+    form.addEventListener('submit', handleSubmit)
+
+    async function authUser(credentials) {
+      try {
+        const res = await fetch('/user/auth', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(credentials)
+        })
+
+        console.log(res)
+
+        if (!res.ok) {
+          const { message } = await res.json()
+          throw new Error(`Status: ${res.status}: ${message}`)
+        }
+        const result = await res.json()
+        setButton('success')
+        console.log('Success:', result)
+
+        localStorage.setItem('userId', result.id)
+
+        setTimeout(() => {
+          form.setAttribute('class', 'exiting')
+        }, 400)
+
+        form.addEventListener('animationend', () => {
+          setTimeout(() => {
+            window.location.href = result.redirect
+          }, 400)
+        })
+
+
+      } catch (error) {
+        setButton('error')
+        console.error(error.message)
+      }
+    }
+
+    function setButton(status) {
+      switch (status) {
+        case 'loading':
+          btnText.textContent = 'Loading'
+          button.setAttribute('class', 'loading')
+          break;
+        case 'error':
+          btnText.textContent = 'Erro ao processar'
+          button.setAttribute('class', 'error')
+          break;
+        case 'success':
+          btnText.textContent = 'Success'
+          button.setAttribute('class', 'success')
+          break;
+        default:
+          btnText.textContent = 'Login'
+          button.setAttribute('class', '')
+          break;
+      }
+    }
+
+  </script>
+
+</body>
+
+</html>

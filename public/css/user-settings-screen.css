@@ -1,23 +1,22 @@
 form {
-  padding: var( --default-padding) calc(2 * var( --default-padding)) ;
+  padding: var(--default-padding) calc(2 * var(--default-padding));
   display: flex;
   flex-direction: column;
   gap: 2rem;
   color: white;
+  max-width: calc(432px + calc(2* var(--default-padding)));
+  margin-inline: auto;
 }
 
 form fieldset {
   border: none;
 }
 
-form h3 {
-  margin-bottom: .8rem;
-}
-
-form input[type=text], form select{
+form input[type=text],
+form input[type=password],
+form select {
   border: none;
   width: 100%;
-  /* height: 32px; */
   font-size: 1rem;
   background-color: rgb(118 118 128 / .24);
   color: rgb(255 255 255);
@@ -26,6 +25,118 @@ form input[type=text], form select{
   overflow: hidden;
 }
 
+form select {
+  border-right: 10px solid transparent
+}
+
 .settings-items {
   display: contents;
+}
+
+.settings-items:has(h3){
+  & h3 {
+    margin-block-end: 1rem;
+  }
+}
+
+form {
+  & button {
+    border: none;
+    width: 100%;
+    font-size: 1rem;
+    background-color: rgb(118, 118, 128, 0.24);
+    color: rgb(255, 255, 255);
+    padding: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: background-color 300ms, transform 200ms;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  & .icon {
+    margin-left: -3rem;
+  }
+
+  & button:hover {
+    background-color: rgb(118, 118, 128, 0.4);
+  }
+
+  & button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+  }
+
+  & button.success {
+    background-color: #4caf50;
+
+    & .success-icon {
+      opacity: 1;
+
+      & .checkmark {
+        stroke: white;
+        stroke-dashoffset: 745.74853515625;
+        stroke-dasharray: 745.74853515625;
+        animation: dash 2s ease-out forwards;
+      }
+    }
+  }
+
+  & button.error {
+    background-color: #ff4d4d;
+    animation: shake 0.5s ease-in-out;
+  }
+
+  & button.loading {
+    & .loading-spinner {
+      opacity: 1;
+    }
+  }
+
+  & .loading-spinner,
+  .success-icon {
+    width: 2rem;
+    height: 2rem;
+    opacity: 0;
+    transition: opacity 300ms;
+    scale: .8;
+  }
+}
+
+/* Shake Animation for Error */
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 745.74853515625;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
 }
