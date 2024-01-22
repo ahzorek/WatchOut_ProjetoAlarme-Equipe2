@@ -1,12 +1,24 @@
-import { nanoid } from 'nanoid'
-import { getAlarmById, getAlarmIndexById, getAlarms, getAlarmsByUserRefId } from "../db/conexao.js"
+import { getAlarmById, getAlarmIndexById, getAlarms, getAlarmsByUserRefId, addAlarm } from "../db/conexao.js"
+
+const defaultAlarmObject = {
+  description: 'Alarme',
+  ringtone: 'marimba',
+  isActive: true,
+  isRepeating: false,
+  days: { sun: true, mon: true, tue: true, wed: true, thu: true, fri: true, sat: true },
+  alarmTime: '12:00:00'
+}
 
 class AlarmRepository {
 
   //CRUD
   //C for CREATE
-  create(data) {
 
+  create(data) {
+    return addAlarm({
+      ...defaultAlarmObject,
+      ...data
+    })
   }
 
   //R for READ
@@ -21,6 +33,13 @@ class AlarmRepository {
 
   findByUserId(id) {
     return getAlarmsByUserRefId(id)
+  }
+
+  toggle(id) {
+    const switchToggleAlarm = getAlarmById(id)
+    switchToggleAlarm.isActive = !switchToggleAlarm.isActive
+
+    return switchToggleAlarm
   }
 
   //U for UPDATE
