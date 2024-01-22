@@ -1,6 +1,8 @@
 {
   "short_name": "Watch Out",
-  "name": "Watch Out - alpha 0.0.2",
+  "name": "Watch Out - beta 0.1",
+  "theme_color": "black",
+  "background_color": "black",
   "icons": [
     {
       "src": "img/watch.png",
@@ -8,7 +10,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "/index.html?user=eok16lJm",
+  "start_url": "/",
   "display": "standalone",
   "orientation": "portrait"
 }
