@@ -36,7 +36,7 @@ class Alarm {
   patch(req, res) {
     const alarm = AlarmRepository.toggle(req.params.id)
     console.log(alarm)
-    res.status(200).json({ message: 'successfully toggled alarm', alarm })
+    res.status(200).json({ message: 'Alteração bem sucedida!', alarm })
   }
 
   //delete

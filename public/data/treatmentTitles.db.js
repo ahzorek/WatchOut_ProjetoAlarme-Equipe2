@@ -19,6 +19,9 @@ const treatmentTitle = [
   { title: 'Parceira', slug: 'parceira' },
   { title: 'Camarada', slug: 'camarada' },
   { title: 'Chefe', slug: 'chefe' },
-  { title: 'Chefia', slug: 'chefia' }
+  { title: 'Chefia', slug: 'chefia' },
+  { title: 'Meu Consagrado', slug: 'consagrado' },
+  { title: 'Minha Consagrada', slug: 'consagrada' },
+  { title: 'Minha Jóia', slug: 'minha-joia' }
 ]
 export default treatmentTitle
