@@ -29,7 +29,7 @@ class DashboardScreen extends Screen {
 
   loadData() {
     this.weatherWidget.refresh()
-    this.dateTimeWidget.refresh()
+    // this.dateTimeWidget.refresh()
 
     setTimeout(() => {
       this.loading = false
