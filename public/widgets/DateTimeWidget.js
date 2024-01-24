@@ -1,9 +1,8 @@
 import printTime from "../utils/printTime.js"
 
 class DateTimeWidget {
-  constructor(app, container) {
+  constructor(app) {
     this.app = app
-    this.container = container
     this.isLoading = true
     this.mainElement = this.createStructure()
 
@@ -11,9 +10,12 @@ class DateTimeWidget {
     this.timeElement = this.mainElement.querySelector('.time')
     this.dateElement = this.mainElement.querySelector('.date')
 
-    this.container.appendChild(this.mainElement)
-
     this.initializeWidget()
+    this.render()
+  }
+
+  refresh() {
+    this.isLoading = true
     this.render()
   }
 
@@ -29,7 +31,7 @@ class DateTimeWidget {
 
   initializeWidget() {
     if (!this.app.state.timeNow | !this.app.state.currDate) {
-      console.log('failed race condition at clock');
+
       setTimeout(() => {
         this.initializeWidget()
       }, 500)
@@ -37,16 +39,30 @@ class DateTimeWidget {
       this.isLoading = false
       this.renderDate()
       this.renderMessage()
+      this.runClock()
+    }
+  }
+
+  runClock() {
+    if (this.app.state.timeNow) {
+      this.app.incrementClock(this.app.state.timeNow)
+      this.app.checkForAlarms()
       this.renderClock()
+
+      setTimeout(() => {
+        //console.log('clockwork')
+        this.runClock()
+      }, 1000)
+    }
+    else {
+      this.isLoading = true
+      this.render()
     }
   }
 
   renderClock() {
     if (this.app.state.timeNow) {
       this.timeElement.innerHTML = this.timeFormatted()
-      setTimeout(() => {
-        this.renderClock()
-      }, 1000)
     }
   }
 
@@ -84,7 +100,11 @@ class DateTimeWidget {
 
   render() {
     if (this.isLoading) {
-      return `<div class="loading-spinner"></div>`
+      const spinner = document.createElement('div')
+      spinner.classList.add('loading-spinner')
+
+      return spinner
+
     } else {
       return this.mainElement
     }

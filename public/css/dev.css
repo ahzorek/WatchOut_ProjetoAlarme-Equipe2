@@ -24,6 +24,9 @@
     span {
       border: 1px dotted blue !important;
     }
+    time {
+      border: 1px dotted aqua !important;
+    }
     h1, h2, h3, h4, p {
       border: 1px dotted greenyellow !important;
       

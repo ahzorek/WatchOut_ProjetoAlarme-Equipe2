@@ -1,9 +1,8 @@
 import formatTemperature from "../utils/formatTemp.js"
 
 class WeatherWidget {
-  constructor(app, container) {
+  constructor(app) {
     this.app = app
-    this.container = container
     this.isLoading = true
     this.error = null
     this.weatherData = null
@@ -16,19 +15,17 @@ class WeatherWidget {
   createStructure() {
     this.widgetElement = document.createElement('section')
     this.widgetElement.classList.add('weather-card')
-    this.container.appendChild(this.widgetElement)
-
   }
 
-  updateWeatherData(state) {
-    const { weather, user } = state
-    console.log('weatherWidget received:', weather)
+  updateWeatherData({ weather, user }) {
+
     if (!weather | !user) {
       console.log('failed race condition at weather')
       setTimeout(() => { this.render() }, 1000)
       return
     }
 
+    console.log('weatherWidget received:', weather)
     this.unit = user.unit
 
     const { cityName, temperature, minTemperature, maxTemperature, weatherIconURL, isLoading, error } = weather
@@ -47,6 +44,11 @@ class WeatherWidget {
     this.render()
   }
 
+  refresh() {
+    this.isLoading = true
+    this.render()
+  }
+
 
   render() {
     this.widgetElement.innerHTML = ''
@@ -57,17 +59,24 @@ class WeatherWidget {
       this.widgetElement.appendChild(spinner)
 
       this.updateWeatherData(this.app.state)
+
+      return this.widgetElement
     }
     else if (this.error) {
       const errorElement = document.createElement('div')
       errorElement.textContent = `Error: ${this.error}`
       this.widgetElement.appendChild(errorElement)
+
+
+      return this.widgetElement
     }
     else if (!this.weatherData.cityName || !this.weatherData.temperature) {
 
       const errorElement = document.createElement('div')
       errorElement.textContent = `Error: não foi possivel carregar algumas informações`
       this.widgetElement.appendChild(errorElement)
+
+      return this.widgetElement
 
     } else {
       const weatherInfoElement = document.createElement('div')
@@ -113,6 +122,8 @@ class WeatherWidget {
 
       this.widgetElement.appendChild(weatherInfoElement)
       this.widgetElement.appendChild(weatherIconElement)
+
+      return this.widgetElement
     }
   }
 }

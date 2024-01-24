@@ -1,3 +1,14 @@
+  .empty-list {
+    color: #666666ee;
+    display: grid;
+    height: 70%;
+    place-items: center;
+  }
+
+  .empty-list svg {
+    width: 2rem;
+  }
+
   .settings-card:has(input[type=checkbox]:checked) {
     --color-dark: var(--color-600);
     --color-light: var(--color-50);
@@ -30,9 +41,8 @@
   }
 
   .settings-card:active {
-    transform: scale(.94);
-    animation: vibrate-1 0.3s linear infinite both;
-    -webkit-animation: vibrate-1 0.3s linear infinite both;
+    animation: vibrate-1 200ms linear infinite both;
+    -webkit-animation: vibrate-1 200ms linear infinite both;
 
   }
 
@@ -41,6 +51,10 @@
     justify-content: space-between;
     align-items: center;
     gap: .725rem;
+  }
+
+  .settings-card section:has(>.del-btn){
+    gap: .225rem;
   }
 
   .settings-card date {
@@ -88,11 +102,14 @@
   .settings-card .alarm-days .tag-day {
     background-color: var(--color-light);
     color: var(--color-dark);
-    padding: .2rem .6rem;
-    border-radius: .5rem;
+    padding: .1rem .2rem;
+    border-radius: .475rem;
     line-height: 20px;
-    font-size: .8rem;
+    font-size: .725rem;
     font-weight: 600;
+    min-width: 1.8rem;
+    text-align: center;
+    overflow: hidden;
   }
 
   .settings-card .alarm-toggle {
@@ -138,31 +155,31 @@
 
   .settings-card .alarm-edit-btn {
     opacity: 1;
+    scale: 1;
     aspect-ratio: 1;
-    width: 1.8rem;
+    width: 1.6rem;
+    padding: 0.15rem 0.15rem 0.2rem 0.2rem;
     background-color: var(--color-dark);
-    padding: 0.1rem 0.1rem 0.2rem 0.2rem;
     stroke: var(--color-light);
-    border-radius: .5rem;
+    border-radius: .425rem;
+  }
+
+  .settings-card .del-btn {
+    margin-inline-start: auto;
+    padding: .15rem;
   }
 
   @media (hover: hover) {
     .settings-card .alarm-edit-btn {
-      aspect-ratio: 1;
       width: 1.4rem;
       opacity: 0;
+      scale: 0;
       transition: all 100ms ease-in;
     }
 
     .settings-card:hover .alarm-edit-btn {
       opacity: 1;
-      aspect-ratio: 1;
-      width: 1.5rem;
-      background-color: var(--color-dark);
-      padding: 0.15rem 0.15rem 0.2rem 0.2rem;
-      stroke: var(--color-light);
+      scale: 1;
       cursor: pointer;
-      border-radius: 0.3rem;
     }
-
   }

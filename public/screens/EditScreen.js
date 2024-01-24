@@ -41,14 +41,13 @@ class EditScreen extends Screen {
     title.textContent = "Edit"
 
     const closeButton = document.createElement("button")
-    closeButton.classList.add("close-screen")
-
+    closeButton.classList.add("nav-btn", "back-btn")
     closeButton.innerHTML = closeIcon
 
     closeButton.addEventListener('click', () => this.app.goBack())
 
     const saveButton = document.createElement("button")
-    saveButton.classList.add("save-btn", "close-screen")
+    saveButton.classList.add("nav-btn", "save-btn")
     saveButton.innerHTML = saveIcon
 
     saveButton.addEventListener('click', async () => {
@@ -160,7 +159,7 @@ class EditScreen extends Screen {
     fieldsetElement.className = 'checkbox-group'
     this.daysField = fieldsetElement
 
-    const daysOptions = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    const daysOptions = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab']
 
     daysOptions.forEach(day => {
       const daySlug = day.toLowerCase()
@@ -346,7 +345,7 @@ class EditScreen extends Screen {
       <div class="loading-spinner"></div>
       `
     } else {
-      console.log(this.alarm)
+      // console.log(this.alarm)
       this.container.innerHTML = ``
       this.container.appendChild(
         this.createStructure(this.alarm)

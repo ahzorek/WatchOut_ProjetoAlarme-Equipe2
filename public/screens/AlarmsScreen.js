@@ -6,7 +6,9 @@ import printTime from "../utils/printTime.js"
 import displayDaysTags from "../utils/displayDaysTags.js"
 import handleAlarmStatus from '../utils/handleAlarmStatus.js'
 
-import { closeIcon, editIcon, repeatIcon, snoozeIcon } from '../icons/index.js'
+import autoAnimate from '../utils/autoAnimate.js'
+
+import { closeIcon, editIcon, repeatIcon, snoozeIcon, emptyAlarmsListIcon, trashIcon } from '../icons/index.js'
 
 class AlarmsScreen extends Screen {
   constructor(app) {
@@ -37,8 +39,7 @@ class AlarmsScreen extends Screen {
     title.textContent = "Alarms"
 
     const closeButton = document.createElement("button")
-    closeButton.classList.add("close-screen")
-
+    closeButton.classList.add("nav-btn", "back-btn")
     closeButton.innerHTML = closeIcon
 
     closeButton.addEventListener('click', () => this.app.goBack())
@@ -46,101 +47,134 @@ class AlarmsScreen extends Screen {
     header.appendChild(title)
     header.appendChild(closeButton)
 
-    const alarmsList = document.createElement('ul')
-    alarmsList.classList.add('alarms-list')
+    if (alarms.length <= 0) {
 
-    alarms.forEach(async ({ id, alarmTime, description, isActive, days, isRepeating }) => {
-      const alarmCard = document.createElement('li')
-      const [h, m, s] = alarmTime.split(':')
-      const theme = await getTheme(alarmTime)
+      const emptyAlarmList = document.createElement('div')
+      emptyAlarmList.classList.add('empty-list')
+      emptyAlarmList.innerHTML = emptyAlarmsListIcon
 
-      alarmCard.classList.add('settings-card')
-      alarmCard.classList.add(theme)
+      structure.appendChild(header)
+      structure.appendChild(emptyAlarmList)
 
-      alarmCard.setAttribute('title', description)
-      alarmCard.setAttribute('data-attribute-id', id)
+      return structure
 
-      const section_1 = document.createElement('section')
+    } else {
 
-      const alarmTimeSpan = document.createElement('span')
-      alarmTimeSpan.classList.add('alarm-time')
-      const dateEl = document.createElement('date')
-      dateEl.innerHTML = printTime({ h, m, s }, user.is12Hour)
+      const alarmsList = document.createElement('ul')
+      alarmsList.classList.add('alarms-list')
+      autoAnimate(alarmsList)
 
-      alarmTimeSpan.appendChild(dateEl)
+      alarms.forEach(async ({ id, alarmTime, description, isActive, days, isRepeating }) => {
+        const alarmCard = document.createElement('li')
+        const [h, m, s] = alarmTime.split(':')
+        const theme = await getTheme(alarmTime)
 
-      const alarmIcons = document.createElement('span')
-      alarmIcons.classList.add('alarm-icons')
-      if (isRepeating) alarmIcons.innerHTML = repeatIcon
+        alarmCard.classList.add('settings-card')
+        alarmCard.classList.add(theme)
 
-      const alarmToggle = document.createElement('span')
-      alarmToggle.classList.add('alarm-toggle')
+        alarmCard.setAttribute('title', description)
+        alarmCard.setAttribute('data-attribute-id', id)
 
-      const alarmToggleInput = document.createElement('input')
-      alarmToggleInput.classList.add('switch')
-      alarmToggleInput.setAttribute('type', 'checkbox')
-      alarmToggleInput.setAttribute('id', id)
-      if (isActive) alarmToggleInput.setAttribute('checked', 'true')
-      alarmToggleInput.addEventListener('change', () => this.toggleAlarm(id))
+        const section_1 = document.createElement('section')
 
-      alarmToggle.appendChild(alarmToggleInput)
+        const alarmTimeSpan = document.createElement('span')
+        alarmTimeSpan.classList.add('alarm-time')
+        const dateEl = document.createElement('date')
+        dateEl.innerHTML = printTime({ h, m, s }, user.is12Hour)
 
-      section_1.appendChild(alarmTimeSpan)
-      section_1.appendChild(alarmIcons)
-      section_1.appendChild(alarmToggle)
+        alarmTimeSpan.appendChild(dateEl)
 
-      const section_2 = document.createElement('section')
-      const h3Title = document.createElement('h3')
-      h3Title.classList.add('alarm-title')
-      h3Title.setAttribute('title', description)
-      h3Title.textContent = description
+        const alarmIcons = document.createElement('span')
+        alarmIcons.classList.add('alarm-icons')
+        if (isRepeating) alarmIcons.innerHTML = repeatIcon
 
-      section_2.appendChild(h3Title)
+        const alarmToggle = document.createElement('span')
+        alarmToggle.classList.add('alarm-toggle')
 
-      const section_3 = document.createElement('section')
-      const alarmDays = document.createElement('span')
-      alarmDays.classList.add('alarm-days')
-      alarmDays.innerHTML = displayDaysTags(days)
+        const alarmToggleInput = document.createElement('input')
+        alarmToggleInput.classList.add('switch')
+        alarmToggleInput.setAttribute('type', 'checkbox')
+        alarmToggleInput.setAttribute('id', id)
+        if (isActive) alarmToggleInput.setAttribute('checked', 'true')
+        alarmToggleInput.addEventListener('change', () => this.toggleAlarm(id))
 
-      const alarmEditBtn = document.createElement('span')
-      alarmEditBtn.classList.add('alarm-edit-btn')
-      alarmEditBtn.setAttribute('title', `Edit alarm: ${description}`)
-      alarmEditBtn.innerHTML = editIcon
-      alarmEditBtn.addEventListener('click', () => this.goToEditAlarmScreen(id))
+        alarmToggle.appendChild(alarmToggleInput)
 
-      section_3.appendChild(alarmDays)
-      section_3.appendChild(alarmEditBtn)
+        section_1.appendChild(alarmTimeSpan)
+        section_1.appendChild(alarmIcons)
+        section_1.appendChild(alarmToggle)
 
-      alarmCard.appendChild(section_1)
-      alarmCard.appendChild(section_2)
-      alarmCard.appendChild(section_3)
+        const section_2 = document.createElement('section')
+        const h3Title = document.createElement('h3')
+        h3Title.classList.add('alarm-title')
+        h3Title.setAttribute('title', description)
+        h3Title.textContent = description
 
-      alarmCard.addEventListener('mousedown', () => {
-        const longpress = setTimeout(() => {
-          this.goToEditAlarmScreen(id)
-        }, 800)
-        alarmCard.addEventListener('mouseup', () => {
-          clearTimeout(longpress)
+        section_2.appendChild(h3Title)
+
+        const section_3 = document.createElement('section')
+        const alarmDays = document.createElement('span')
+        alarmDays.classList.add('alarm-days')
+        alarmDays.innerHTML = displayDaysTags(days)
+
+        const alarmEditBtn = document.createElement('span')
+        alarmEditBtn.classList.add('alarm-edit-btn')
+        alarmEditBtn.setAttribute('title', `Edit alarm: ${description}`)
+        alarmEditBtn.innerHTML = editIcon
+        alarmEditBtn.addEventListener('click', () => this.goToEditAlarmScreen(id))
+
+        const alarmDelBtn = document.createElement('span')
+        alarmDelBtn.classList.add('alarm-edit-btn', 'del-btn')
+        alarmDelBtn.setAttribute('title', `Del alarm: ${description}`)
+        alarmDelBtn.innerHTML = trashIcon
+        alarmDelBtn.addEventListener('click', () => {
+          alarmCard.remove() //provisorio
         })
+
+
+
+        section_3.appendChild(alarmDays)
+        section_3.appendChild(alarmDelBtn)
+        section_3.appendChild(alarmEditBtn)
+
+        alarmCard.appendChild(section_1)
+        alarmCard.appendChild(section_2)
+        alarmCard.appendChild(section_3)
+
+        alarmCard.addEventListener('mousedown', (e) => {
+          if (e.target.type !== 'checkbox') {
+            const longpress = setTimeout(() => {
+              this.goToEditAlarmScreen(id)
+            }, 800)
+            alarmCard.addEventListener('mouseup', () => {
+              clearTimeout(longpress)
+            })
+          }
+        })
+
+        alarmCard.addEventListener('touchstart', (e) => {
+          if (e.target.type !== 'checkbox') {
+            navigator.vibrate([0, 100, 200, 300, 600]) //adiciona resposta haptica
+            const longpress = setTimeout(() => {
+              this.goToEditAlarmScreen(id)
+            }, 900)
+            alarmCard.addEventListener('touchend', () => {
+              navigator.vibrate([0]) //cancela a resposta haptica anterior
+              clearTimeout(longpress)
+            })
+          }
+        })
+
+
+        alarmsList.appendChild(alarmCard)
       })
 
-      alarmCard.addEventListener('touchstart', () => {
-        const longpress = setTimeout(() => {
-          this.goToEditAlarmScreen(id)
-        }, 900)
-        alarmCard.addEventListener('touchend', () => {
-          clearTimeout(longpress)
-        })
-      })
+      structure.appendChild(header)
+      structure.appendChild(alarmsList)
 
+      return structure
+    }
 
-      alarmsList.appendChild(alarmCard)
-    })
-
-    structure.appendChild(header)
-    structure.appendChild(alarmsList)
-
-    return structure
   }
 
   goToEditAlarmScreen(id) {

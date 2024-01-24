@@ -104,9 +104,9 @@ class SettingsScreen extends Screen {
     })
 
     const closeButton = document.createElement("button")
-    closeButton.classList.add("close-screen")
-
+    closeButton.classList.add("nav-btn", "back-btn")
     closeButton.innerHTML = closeIcon
+
     closeButton.addEventListener('click', async () => await this.exitScreen())
 
 
@@ -226,25 +226,6 @@ class SettingsScreen extends Screen {
     containerTemp.appendChild(temperaturePicker)
     elements.push(containerTemp)
 
-    //mostrar/esconder segundos
-    const hideSecContainer = document.createElement('div')
-    const hideSecTitle = document.createElement('h3')
-    hideSecTitle.classList.add('title3')
-    hideSecTitle.textContent = 'Segundos'
-
-    hideSecContainer.appendChild(hideSecTitle)
-
-    const secondsOptions = [
-      { optionName: 'Esconder', optionValue: true },
-      { optionName: 'Mostrar', optionValue: false }
-    ]
-    const secondsPicker = createSegmentedPicker(
-      secondsOptions, 'hideSec', user.hideSec, true
-    )
-
-    hideSecContainer.appendChild(secondsPicker)
-    elements.push(hideSecContainer)
-
     //formato relogio
     const is12HourContainer = document.createElement('div')
     const is12HourTitle = document.createElement('h3')
@@ -263,6 +244,25 @@ class SettingsScreen extends Screen {
 
     is12HourContainer.appendChild(is12HourPicker)
     elements.push(is12HourContainer)
+
+    //mostrar/esconder segundos
+    const hideSecContainer = document.createElement('div')
+    const hideSecTitle = document.createElement('h3')
+    hideSecTitle.classList.add('title3')
+    hideSecTitle.textContent = 'Segundos'
+
+    hideSecContainer.appendChild(hideSecTitle)
+
+    const secondsOptions = [
+      { optionName: 'Esconder', optionValue: true },
+      { optionName: 'Mostrar', optionValue: false }
+    ]
+    const secondsPicker = createSegmentedPicker(
+      secondsOptions, 'hideSec', user.hideSec, true
+    )
+
+    hideSecContainer.appendChild(secondsPicker)
+    elements.push(hideSecContainer)
 
     //usar tema neutro
     const useNeutralThemeContainer = document.createElement('div')

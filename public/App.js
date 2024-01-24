@@ -2,11 +2,12 @@ import DashboardScreen from './screens/DashboardScreen.js'
 import SettingsScreen from './screens/SettingsScreen.js'
 import AlarmsScreen from './screens/AlarmsScreen.js'
 import CreateScreen from './screens/CreateScreen.js'
-
+import AlarmHandler from './widgets/AlarmHandler.js'
 import getTheme from './utils/getTheme.js'
 import splitTimeString from './utils/splitTimeString.js'
 import formatTime from './utils/formatTime.js'
 import getWeatherData from './utils/getWeather.js'
+import compareTimeObjects from './utils/compareTimeObjects.js'
 
 import { bellIcon, createIcon, settingsIcon } from './icons/index.js'
 
@@ -28,12 +29,15 @@ class App {
     this.history = []
     this.userId = params.get('user') || localStorage.getItem('userId')
     this.theme = null
+    this.audioContext = null
+
     this.isLoading = true
 
     this.dashboardScreen = new DashboardScreen(this)
     this.settingsScreen = new SettingsScreen(this)
     this.alarmsScreen = new AlarmsScreen(this)
     this.createScreen = new CreateScreen(this)
+    this.alarmHandler = new AlarmHandler(this, this.container)
 
     this.initializeApp()
 
@@ -43,10 +47,9 @@ class App {
     // cria navegação
     this.createBottomNavigationBar()
 
-    // cria a box de dialogo do alarme(tem que existir no markup sempre)
-    this.createAlarmDialog()
+    this.alarmHandler.createAlarmDialog()
 
-    this.runEverySecond()
+    //this.runEverySecond()
 
     this.runEvery15Minutes()
 
@@ -62,11 +65,13 @@ class App {
     if (this.state.user && this.state.user.city) {
       await this.initializeAlarms(this.state.user)
       await this.initializeWeather(this.state.user.city)
+      this.alarmHandler.defineNextAlarm(this.state.timeNow, this.state.alarms)
     } else {
       console.error('race condition failed at app start')
     }
 
     this.addVisibilityChangeListener()
+    this.initAudioContext()
     this.isLoading = false
   }
 
@@ -78,14 +83,18 @@ class App {
     )
   }
 
-  runEverySecond() {
-    setInterval(() => {
-      //roda todo segundo
-      this.incrementClock(this.state.timeNow)
+  // runEverySecond() {
+  //   setInterval(() => {
+  //     //roda todo segundo
+  //     this.incrementClock(this.state.timeNow)
 
-      // console.log(this.timeStringUpdated())
-    }, SEC)
+  //     // console.log(this.timeStringUpdated())
+  //   }, SEC)
 
+  // }
+
+  initAudioContext() {
+    this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
   }
 
   runEvery5Minutes() {
@@ -106,21 +115,51 @@ class App {
     }, 15 * MIN)
   }
 
+  getWeekdayString() {
+    return this.state.currDate.split('.')[0]
+  }
+
   getAlarmById(id) {
     return Array.from(this.state.alarms).find(alarm => alarm.id === id)
   }
 
   updateLocalAlarmData(id, data) {
-
     const alarmIndex = Array.from(this.state.alarms).findIndex(alarm => alarm.id === id)
     this.state.alarms[alarmIndex] = data
+    this.alarmHandler.defineNextAlarm(this.state.timeNow, this.state.alarms)
+
+  }
+
+  addNewAlarmToLocalData(data) {
+    this.state.alarms.push(data)
+    this.alarmHandler.defineNextAlarm(this.state.timeNow, this.state.alarms)
   }
 
   updateUserState(newState) {
     this.state.user = newState
   }
 
+  checkForAlarms() {
+    if (this.state?.nextAlarm) {
+      if (compareTimeObjects(
+        this.state.timeNow,
+        this.state.nextAlarm.timeObj
+      )) {
+        console.log('alarme ativou')
+        this.alarmHandler.startAlarm(this.state.nextAlarm)
+        // realiza acima toda lógica de disparar o alarm (dialog e alert som)
+        // e ativa abaixo a logica para procurar o proximo alarme valido
+        this.alarmHandler.defineNextAlarm(
+          this.state.timeNow,
+          this.state.alarms,
+          this.state.nextAlarm.id
+        )
+      }
+    }
+  }
+
   addVisibilityChangeListener() {
+    this.state.focus = true
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         this.state.focus = true
@@ -337,14 +376,6 @@ class App {
         this.activateScreen(this.settingsScreen)
       }
     })
-  }
-
-  createAlarmDialog() {
-    const alarmDialog = document.createElement('div')
-    alarmDialog.classList.add('alarm', 'dialog')
-    alarmDialog.id = 'alarm-box'
-
-    this.container.appendChild(alarmDialog)
   }
 
   devMode(activate) {
