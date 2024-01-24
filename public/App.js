@@ -352,7 +352,7 @@ class App {
 
     settingsLi.innerHTML = `
       ${settingsIcon}
-      <h4>Configurações</h4>
+      <h4>Ajustes</h4>
     `
     ul.appendChild(settingsLi)
     navigation.appendChild(ul)
