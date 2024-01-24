@@ -36,7 +36,7 @@ class AlarmsScreen extends Screen {
 
     const title = document.createElement("h2")
     title.classList.add("title1")
-    title.textContent = "Alarms"
+    title.textContent = "Alarmes"
 
     const closeButton = document.createElement("button")
     closeButton.classList.add("nav-btn", "back-btn")
@@ -119,13 +119,13 @@ class AlarmsScreen extends Screen {
 
         const alarmEditBtn = document.createElement('span')
         alarmEditBtn.classList.add('alarm-edit-btn')
-        alarmEditBtn.setAttribute('title', `Edit alarm: ${description}`)
+        alarmEditBtn.setAttribute('title', `Editar alarme: ${description}`)
         alarmEditBtn.innerHTML = editIcon
         alarmEditBtn.addEventListener('click', () => this.goToEditAlarmScreen(id))
 
         const alarmDelBtn = document.createElement('span')
         alarmDelBtn.classList.add('alarm-edit-btn', 'del-btn')
-        alarmDelBtn.setAttribute('title', `Del alarm: ${description}`)
+        alarmDelBtn.setAttribute('title', `Apagar alarme: ${description}`)
         alarmDelBtn.innerHTML = trashIcon
         alarmDelBtn.addEventListener('click', () => {
           alarmCard.remove() //provisorio

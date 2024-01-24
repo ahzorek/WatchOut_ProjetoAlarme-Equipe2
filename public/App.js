@@ -335,7 +335,7 @@ class App {
     alarmsLi.id = 'alarms'
     alarmsLi.innerHTML = `
       ${bellIcon}
-      <h4>Alarms</h4>
+      <h4>Alarmes</h4>
     `
     ul.appendChild(alarmsLi)
 
@@ -352,7 +352,7 @@ class App {
 
     settingsLi.innerHTML = `
       ${settingsIcon}
-      <h4>Settings</h4>
+      <h4>Configurações</h4>
     `
     ul.appendChild(settingsLi)
     navigation.appendChild(ul)

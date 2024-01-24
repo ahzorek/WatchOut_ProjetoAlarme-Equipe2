@@ -84,7 +84,7 @@ class SettingsScreen extends Screen {
 
     const title = document.createElement("h2")
     title.classList.add("title1")
-    title.textContent = "Settings"
+    title.textContent = "Configurações"
 
     title.addEventListener('click', () => {
       if (this.taps < 7) {

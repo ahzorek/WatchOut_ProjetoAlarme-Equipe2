@@ -38,7 +38,7 @@ class EditScreen extends Screen {
 
     const title = document.createElement("h2")
     title.classList.add("title1")
-    title.textContent = "Edit"
+    title.textContent = "Editar"
 
     const closeButton = document.createElement("button")
     closeButton.classList.add("nav-btn", "back-btn")
@@ -84,7 +84,7 @@ class EditScreen extends Screen {
 
     const horarioTitle = document.createElement('h3')
     horarioTitle.classList.add('title3')
-    horarioTitle.textContent = 'Time'
+    horarioTitle.textContent = 'Hora'
     horarioContainer.appendChild(horarioTitle)
 
     const hourSelectorContainer = document.createElement('div')
@@ -114,7 +114,7 @@ class EditScreen extends Screen {
     const descriptContainer = document.createElement('div')
     const descriptTitle = document.createElement('h3')
     descriptTitle.classList.add('title3')
-    descriptTitle.textContent = 'Description'
+    descriptTitle.textContent = 'Descrição'
 
     descriptContainer.appendChild(descriptTitle)
 
@@ -133,7 +133,7 @@ class EditScreen extends Screen {
     const isActiveContainer = document.createElement('div')
     const isActiveTitle = document.createElement('h3')
     isActiveTitle.classList.add('title3')
-    isActiveTitle.textContent = 'Active'
+    isActiveTitle.textContent = 'Ativar'
 
     isActiveContainer.appendChild(isActiveTitle)
 
@@ -198,7 +198,7 @@ class EditScreen extends Screen {
     const isRepeatingContainer = document.createElement('div')
     const isRepeatingTitle = document.createElement('h3')
     isRepeatingTitle.classList.add('title3')
-    isRepeatingTitle.textContent = 'Repeating'
+    isRepeatingTitle.textContent = 'Repetir'
 
     isRepeatingContainer.appendChild(isRepeatingTitle)
 
