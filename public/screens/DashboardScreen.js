@@ -7,8 +7,10 @@ class DashboardScreen extends Screen {
     super(app)
     this.container = document.createElement('section')
     this.container.classList.add('screen', 'dashboard-screen', 'active')
-
     this.render()
+
+    this.weatherWidget = new WeatherWidget(this.app)
+    this.dateTimeWidget = new DateTimeWidget(this.app)
   }
 
   render() {
@@ -19,14 +21,16 @@ class DashboardScreen extends Screen {
       `
     } else {
       this.container.innerHTML = ''
-      new WeatherWidget(this.app, this.container)
-      new DateTimeWidget(this.app, this.container)
+      this.container.appendChild(this.weatherWidget.render())
+      this.container.appendChild(this.dateTimeWidget.render())
     }
-
     this.app.appendScreen(this.container)
   }
 
   loadData() {
+    this.weatherWidget.refresh()
+    // this.dateTimeWidget.refresh()
+
     setTimeout(() => {
       this.loading = false
 

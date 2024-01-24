@@ -11,13 +11,13 @@ import formatTimeToString from '../utils/formatTimeToString.js'
 
 const emptyCreatingObject = {
   days: {
-    sun: false,
-    mon: false,
-    tue: false,
-    wed: false,
-    thu: false,
-    fri: false,
-    sat: false
+    dom: false,
+    seg: false,
+    ter: false,
+    qua: false,
+    qui: false,
+    sex: false,
+    sab: false
   }
 }
 
@@ -53,7 +53,7 @@ class CreateScreen extends Screen {
     title.textContent = "New"
 
     const closeButton = document.createElement("button")
-    closeButton.classList.add("close-screen")
+    closeButton.classList.add("nav-btn", "back-btn")
     closeButton.innerHTML = closeIcon
 
     closeButton.addEventListener('click', () => {
@@ -62,7 +62,7 @@ class CreateScreen extends Screen {
     })
 
     const saveButton = document.createElement("button")
-    saveButton.classList.add("save-btn", "close-screen")
+    saveButton.classList.add("nav-btn", "save-btn")
     saveButton.innerHTML = saveIcon
 
     saveButton.addEventListener('click', async () => {
@@ -216,7 +216,7 @@ class CreateScreen extends Screen {
     fieldsetElement.className = 'checkbox-group'
     this.daysField = fieldsetElement
 
-    const daysOptions = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    const daysOptions = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab']
 
     daysOptions.forEach(day => {
       const daySlug = day.toLowerCase()
@@ -327,7 +327,11 @@ class CreateScreen extends Screen {
 
   async processSaveNewData() {
     if (this.verifyDataConsistency(this.creating, 'create')) {
-      await this.createNewAlarm(this.app.userId, this.creating)
+      await this.createNewAlarm(
+        this.app.userId,
+        this.creating
+      )
+
       setTimeout(() => { this.app.goBack() }, 400)
 
     }
@@ -344,17 +348,19 @@ class CreateScreen extends Screen {
         body: JSON.stringify(newAlarm),
       })
 
-      if (!res.ok) {
-        throw new Error(`${res.status}`)
-      }
+      if (!res.ok) throw new Error(`${res.status}`)
+
       const { alarmId, message, data } = await res.json()
-      console.log(message)
+      console.log('createNewAlarm receives HTTP RES', message)
 
-      const updatedUser = this.addNewAlarmToUserData(userId, alarmId)
+      const updatedUserData = await this.addNewAlarmToUserData(userId, alarmId)
 
-      if (updatedUser) {
+      if (updatedUserData) {
+
+        console.log('createNewAlarm receives from addNewAlarmToUserData:: ', updatedUserData)
+
         this.app.state.alarms.push(data)
-        this.app.updateUserState(updatedUser)
+        this.app.updateUserState(updatedUserData)
       }
     } catch (err) {
       console.error('Error:', err)
@@ -375,10 +381,11 @@ class CreateScreen extends Screen {
         throw new Error(`${res.status}`)
       }
 
-      const { message } = await res.json()
-      console.log(message)
+      const { message, user } = await res.json()
 
-      return message
+      console.log('addNewAlarmToUserData receives HTTP Res', message)
+
+      return user
 
     } catch (err) {
       console.error(err)

@@ -1,5 +1,6 @@
 //separa a string horario em um objeto com numbers {h,m,s}
 const splitTimeString = (timeString) => {
+  //console.log('splitTimeString recebeu',timeString)
   let [h, m, s] = timeString.split(':')
 
   h = +h //transforma as Strings de hora, min, seg em Number

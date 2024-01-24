@@ -1,0 +1,31 @@
+.nav-btn {
+  border: none;
+  display: flex;
+  align-items: center;
+  aspect-ratio: 1;
+  border-radius: .525rem;
+  padding: .475rem;
+}
+
+.nav-btn svg {
+  width: 1.4rem;
+}
+
+.back-btn {
+  background-color: rgb(103 103 113 / 34%);
+  fill: white;
+  stroke: white;
+}
+
+.save-btn {
+  margin-inline-start: auto;
+  background-color: rgb(19 72 49 / 90%);
+  fill: none;
+  stroke: white;
+  scale: 0;
+  transition: scale 200ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
+
+  &.active {
+    scale: 1;
+  }
+}

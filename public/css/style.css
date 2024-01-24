@@ -6,6 +6,7 @@
 @import './segmented-picker.css';
 @import './time-picker.css';
 @import './create-alarm-screen.css';
+@import './nav.css';
 
 html {
   --default-margin-top: calc(2* var(--default-padding));
@@ -147,7 +148,7 @@ body {
   border-radius: .525rem;
   padding: 6px;
 }
-.save-btn {
+/* .save-btn {
   fill: white;
   background-color: slategray;
   margin-inline-start: auto;
@@ -156,7 +157,7 @@ body {
   &.active {
     scale: 1;
   }
-}
+} */
 
 
 .close-screen svg {
@@ -233,7 +234,7 @@ body {
 
 .time-date-container time {
   font-family: monospace;
-  font-size: 5.6rem;
+  font-size: 5.2rem;
   font-weight: 500;
   letter-spacing: -.675rem;
 }
