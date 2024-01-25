@@ -2,7 +2,7 @@ import { getAlarmById, getAlarmIndexById, getAlarms, getAlarmsByUserRefId, addAl
 
 const defaultAlarmObject = {
   description: 'Alarme',
-  ringtone: 'marimba',
+  ringtone: 'https://prod-1.storage.jamendo.com/?trackid=169&format=mp31&from=W4rjxt66Lv%2FylC7ysLP0bA%3D%3D%7CKxK2oa%2FTBBnlaq8ti0wcWQ%3D%3D',
   isActive: true,
   isRepeating: false,
   days: { sun: true, mon: true, tue: true, wed: true, thu: true, fri: true, sat: true },

@@ -1,6 +1,5 @@
 import Screen from './Screen.js'
 
-import rigntonesList from '../data/ringtones.db.js'
 import { closeIcon, saveIcon } from '../icons/index.js'
 
 import createSegmentedPicker from '../utils/createSegmentedPicker.js'
@@ -124,9 +123,9 @@ class CreateScreen extends Screen {
   }
 
   createAlarmTimeObject({ h, m, isPM }, is12Hour) {
-    if (!this.hasEdited) this.setVisibilityToSaveButton()
-    const hour = is12Hour ? convertTimeFrom12Hour(h, isPM) : h
-    this.creating.alarmTime = formatTimeToString(hour, m)
+    if (!this.hasEdited) this.setVisibilityToSaveButton();
+    const hour = is12Hour ? this.convertTimeFrom12Hour(h, isPM) : h;
+    this.creating.alarmTime = formatTimeToString(hour, m);
   }
 
   submitChanges(data) {
@@ -270,37 +269,70 @@ class CreateScreen extends Screen {
     isRepeatingContainer.appendChild(isRepeatingPicker)
     elements.push(isRepeatingContainer)
 
-    //ringtone
-    const ringtoneContainer = document.createElement('div')
-    const ringtoneTitle = document.createElement('h3')
-    ringtoneTitle.classList.add('title3')
-    ringtoneTitle.textContent = 'Toque'
+    //ringtone Jamento API
+    const jamendoContainer = document.createElement('div');
+    const jamendoTitle = document.createElement('h3');
+    jamendoTitle.classList.add('title3');
+    jamendoTitle.textContent = 'Som';
 
-    ringtoneContainer.appendChild(ringtoneTitle)
+    jamendoContainer.appendChild(jamendoTitle);
 
-    const ringtoneSelect = document.createElement('select')
-    ringtoneSelect.id = 'ringtone'
-    ringtoneSelect.name = 'ringtone'
+    const jamendoSelect = document.createElement('select');
+    jamendoSelect.id = 'jamendoRingtone';
+    jamendoSelect.name = 'jamendoRingtone';
 
-    const defaultOption = document.createElement('option')
-    defaultOption.selected = true | false
-    defaultOption.disabled = true
-    defaultOption.value = 'null'
-    defaultOption.textContent = 'Selecione'
+    const jamendoDefaultOption = document.createElement('option');
+    jamendoDefaultOption.selected = true;
+    jamendoDefaultOption.disabled = true;
+    jamendoDefaultOption.value = 'null';
+    jamendoDefaultOption.textContent = 'Selecione';
 
-    ringtoneSelect.appendChild(defaultOption)
+    jamendoSelect.appendChild(jamendoDefaultOption);
 
-    rigntonesList.forEach(({ slug, title }) => {
-      const option = document.createElement('option')
-      option.value = slug
-      option.textContent = title
-      option.selected = (slug === this.app.state.user.defaultRingtone)
+    // Fetch songs from the Jamendo API
+      async function fetchJamendoTracks() {
+        try {
+          const jamendoResponse = await fetch('https://api.jamendo.com/v3.0/tracks/?client_id=1d583eeb');
+          const jamendoData = await jamendoResponse.json();
 
-      ringtoneSelect.appendChild(option)
-    })
+          const jamendoSongs = jamendoData.results;
+          jamendoSongs.forEach(song => {
+            const jamendoOption = document.createElement('option');
+            jamendoOption.value = song.audio;
+            jamendoOption.textContent = song.name;
+            jamendoSelect.appendChild(jamendoOption);
+          });
 
-    ringtoneContainer.appendChild(ringtoneSelect)
-    elements.push(ringtoneContainer)
+          // Add event listener to play the selected song
+          jamendoSelect.addEventListener('change', () => {
+            const selectedSong = jamendoSelect.value;
+            playSelectedSong(selectedSong);
+          });
+        } catch (error) {
+          console.error('Error fetching Jamendo songs:', error);
+        }
+      }
+
+      // Function to play the selected song
+      function playSelectedSong(songUrl) {
+        // Use the songUrl to play the audio, for example, using an audio element
+        const audioPlayer = document.getElementById('audioPlayer');
+        audioPlayer.src = songUrl;
+        audioPlayer.play();
+
+        setTimeout(() => {
+          audioPlayer.pause();
+          audioPlayer.currentTime = 0;
+        }, 5000);
+        
+      }
+
+      // Call the function to fetch Jamendo tracks
+      fetchJamendoTracks();
+
+      jamendoContainer.appendChild(jamendoSelect);
+      elements.push(jamendoContainer);
+
 
     // const submitBtn = document.createElement('button')
     // submitBtn.type = 'button'
@@ -327,16 +359,21 @@ class CreateScreen extends Screen {
 
   async processSaveNewData() {
     if (this.verifyDataConsistency(this.creating, 'create')) {
+      // Update the ringtone field with the selected song name
+      const selectedSong = document.getElementById('jamendoRingtone');
+      this.creating.ringtone = selectedSong.options[selectedSong.selectedIndex].textContent;
+  
       await this.createNewAlarm(
         this.app.userId,
         this.creating
       )
-
-      setTimeout(() => { this.app.goBack() }, 400)
-
+  
+      setTimeout(() => { this.app.goBack() }, 400);
+    } else {
+      console.log('Inconsistency detected, no data was sent');
     }
-    else console.log('inconsistency detected, no data was sent')
   }
+  
 
   async createNewAlarm(userId, newAlarm) {
     try {
