@@ -106,7 +106,11 @@ class SettingsScreen extends Screen {
     closeButton.classList.add("nav-btn", "back-btn")
     closeButton.innerHTML = closeIcon
 
-    closeButton.addEventListener('click', async () => await this.exitScreen())
+    closeButton.addEventListener('click', async () => {
+      this.stopSong()
+      await this.exitScreen()
+    }
+    )
 
 
     header.appendChild(title)
@@ -313,48 +317,48 @@ class SettingsScreen extends Screen {
     jamendoSelect.appendChild(jamendoDefaultOption);
 
     // Fetch songs from the Jamendo API
-      async function fetchJamendoTracks() {
-        try {
-          const jamendoResponse = await fetch('https://api.jamendo.com/v3.0/tracks/?client_id=1d583eeb');
-          const jamendoData = await jamendoResponse.json();
+    async function fetchJamendoTracks() {
+      try {
+        const jamendoResponse = await fetch('https://api.jamendo.com/v3.0/tracks/?client_id=1d583eeb');
+        const jamendoData = await jamendoResponse.json();
 
-          const jamendoSongs = jamendoData.results;
-          jamendoSongs.forEach(song => {
-            const jamendoOption = document.createElement('option');
-            jamendoOption.value = song.audio;
-            jamendoOption.textContent = song.name;
-            jamendoSelect.appendChild(jamendoOption);
-          });
+        const jamendoSongs = jamendoData.results;
+        jamendoSongs.forEach(song => {
+          const jamendoOption = document.createElement('option');
+          jamendoOption.value = song.audio;
+          jamendoOption.textContent = song.name;
+          jamendoSelect.appendChild(jamendoOption);
+        });
 
-          // Add event listener to play the selected song
-          jamendoSelect.addEventListener('change', () => {
-            const selectedSong = jamendoSelect.value;
-            playSelectedSong(selectedSong);
-          });
-        } catch (error) {
-          console.error('Error fetching Jamendo songs:', error);
-        }
+        // Add event listener to play the selected song
+        jamendoSelect.addEventListener('change', () => {
+          const selectedSong = jamendoSelect.value;
+          playSelectedSong(selectedSong);
+        });
+      } catch (error) {
+        console.error('Error fetching Jamendo songs:', error);
       }
+    }
 
-      // Function to play the selected song
-      function playSelectedSong(songUrl) {
-        // Use the songUrl to play the audio, for example, using an audio element
-        const audioPlayer = document.getElementById('audioPlayer');
-        audioPlayer.src = songUrl;
-        audioPlayer.play();
+    // Function to play the selected song
+    function playSelectedSong(songUrl) {
+      // Use the songUrl to play the audio, for example, using an audio element
+      const audioPlayer = document.getElementById('audioPlayer');
+      audioPlayer.src = songUrl;
+      audioPlayer.play();
 
-        setTimeout(() => {
-          audioPlayer.pause();
-          audioPlayer.currentTime = 0;
-        }, 5000);
-        
-      }
+      setTimeout(() => {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+      }, 5000);
 
-      // Call the function to fetch Jamendo tracks
-      fetchJamendoTracks();
+    }
 
-      jamendoContainer.appendChild(jamendoSelect);
-      elements.push(jamendoContainer);
+    // Call the function to fetch Jamendo tracks
+    fetchJamendoTracks();
+
+    jamendoContainer.appendChild(jamendoSelect);
+    elements.push(jamendoContainer);
 
 
     elements.forEach(el => {

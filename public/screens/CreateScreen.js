@@ -58,6 +58,7 @@ class CreateScreen extends Screen {
     closeButton.addEventListener('click', () => {
       this.creating = emptyCreatingObject
       this.app.goBack()
+      this.stopSong(); 
     })
 
     const saveButton = document.createElement("button")
@@ -65,9 +66,12 @@ class CreateScreen extends Screen {
     saveButton.innerHTML = saveIcon
 
     saveButton.addEventListener('click', async () => {
+      this.stopSong(); 
       await this.processSaveNewData()
     })
 
+  
+  
     this.topSaveButton = saveButton
 
     header.appendChild(title)
@@ -88,6 +92,13 @@ class CreateScreen extends Screen {
     structure.appendChild(form)
 
     return structure
+  }
+
+  stopSong() {
+    // Add logic to stop the song here
+    const audioPlayer = document.getElementById('audioPlayer');
+    audioPlayer.pause();
+    audioPlayer.currentTime = 0;
   }
 
   setVisibilityToSaveButton() {
@@ -318,6 +329,7 @@ class CreateScreen extends Screen {
         // Use the songUrl to play the audio, for example, using an audio element
         const audioPlayer = document.getElementById('audioPlayer');
         audioPlayer.src = songUrl;
+        audioPlayer.currentTime = 20;
         audioPlayer.play();
 
         setTimeout(() => {
