@@ -15,8 +15,8 @@ class DateTimeWidget {
   }
 
   refresh() {
-    this.isLoading = true
-    this.render()
+    this.renderDate()
+    this.renderMessage()
   }
 
   timeFormatted() {
@@ -31,11 +31,11 @@ class DateTimeWidget {
 
   initializeWidget() {
     if (!this.app.state.timeNow | !this.app.state.currDate) {
-
       setTimeout(() => {
         this.initializeWidget()
       }, 500)
-    } else {
+    }
+    else {
       this.isLoading = false
       this.renderDate()
       this.renderMessage()

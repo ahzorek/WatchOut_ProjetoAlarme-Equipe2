@@ -119,15 +119,18 @@ class AlarmHandler {
 
   async preloadRingtone(alarm) {
     console.log('preload ringtone recebeu:', alarm)
-  
+
     const { jamendoRingtone } = alarm; // Use jamendoRingtone property
+    const ringtone = jamendoRingtone.split('&#')[0]
+
+
     try {
-      const response = await fetch(jamendoRingtone); // Use jamendoRingtone URL
+      const response = await fetch(ringtone); // Use jamendoRingtone URL
       const data = await response.arrayBuffer();
-  
+
       const buffer = await this.app.audioContext.decodeAudioData(data);
       this.ringtoneBuffer = buffer;
-  
+
       this.ringtone = true;
     } catch (error) {
       console.error('Error loading audio file:', error);

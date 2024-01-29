@@ -234,10 +234,11 @@ body {
 }
 
 .time-date-container time {
-  font-family: monospace;
+  /* font-family: monospace; */
   font-size: 5.2rem;
   font-weight: 500;
-  letter-spacing: -.675rem;
+  letter-spacing: -.275rem;
+  margin-left: -.275rem;
 }
 
 .time-date-container time .time-format-suffix {
@@ -377,6 +378,33 @@ body {
   color: var(--color-600);
 }
 
+.terms-container {
+  margin-block: 5rem;
+  font-size: .8rem;
+  line-height: 24px;
+
+}
+
+.login-container {
+  height: 100%;
+  /* border: 2px dotted aquamarine; */
+  & h3 {
+    color: white;
+    text-align: center;
+    font-size: .8em;
+  }
+  & a {
+    color: azure;
+  }
+  & div:has(#agreement){
+    display: flex;
+    align-items: center;
+    & input[type=checkbox]{
+      margin-inline-end: .5rem;
+    }
+  }
+}
+
 .screen.active:has(.login-container) {
   display: grid;
   place-items: center;
@@ -394,6 +422,7 @@ body {
 
     & form {
       padding: var(--default-padding);
+      margin-block: 5rem;
     }
   }
 }

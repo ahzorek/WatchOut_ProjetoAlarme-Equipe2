@@ -1,5 +1,5 @@
 const convertTimeTo12Hour = (h) => {
-  console.log('converting to 12 HOUR::', h)
+  // console.log('converting to 12 HOUR::', h)
   if (h == 0) {
     return 12
   } else {

@@ -123,18 +123,18 @@ class AlarmsScreen extends Screen {
         alarmEditBtn.innerHTML = editIcon
         alarmEditBtn.addEventListener('click', () => this.goToEditAlarmScreen(id))
 
-        const alarmDelBtn = document.createElement('span')
-        alarmDelBtn.classList.add('alarm-edit-btn', 'del-btn')
-        alarmDelBtn.setAttribute('title', `Apagar alarme: ${description}`)
-        alarmDelBtn.innerHTML = trashIcon
-        alarmDelBtn.addEventListener('click', () => {
-          alarmCard.remove() //provisorio
-        })
+        // const alarmDelBtn = document.createElement('span')
+        // alarmDelBtn.classList.add('alarm-edit-btn', 'del-btn')
+        // alarmDelBtn.setAttribute('title', `Apagar alarme: ${description}`)
+        // alarmDelBtn.innerHTML = trashIcon
+        // alarmDelBtn.addEventListener('click', () => {
+        //   alarmCard.remove() //provisorio
+        // })
 
 
 
         section_3.appendChild(alarmDays)
-        section_3.appendChild(alarmDelBtn)
+        //section_3.appendChild(alarmDelBtn)
         section_3.appendChild(alarmEditBtn)
 
         alarmCard.appendChild(section_1)
@@ -220,15 +220,11 @@ class AlarmsScreen extends Screen {
     this.app.appendScreen(this.container)
   }
 
-  loadData() {
+  async loadData() {
     this.alarms = this.app.state.alarms
     this.user = this.app.state.user
-
-    setTimeout(() => {
-      this.loading = false
-      this.render()
-
-    }, 500)
+    this.loading = false
+    this.render()
   }
 
 }

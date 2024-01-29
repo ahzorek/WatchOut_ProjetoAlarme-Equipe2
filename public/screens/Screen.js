@@ -8,6 +8,11 @@ class Screen {
     this.swapHour = null
     this.swapMin = null
     this.swapSuffix = null
+    this.tempTime = {
+      h: null,
+      m: null,
+      isPM: null
+    }
   }
 
   delete() {
@@ -22,9 +27,10 @@ class Screen {
     }, 1000)
   }
 
-  activate() {
-    this.container.classList.add('active')
+  async activate() {
     if (this.loading) this.loadData()
+    await new Promise(resolve => setTimeout(() => resolve(), 50))
+    this.container.classList.add('active')
     console.log('rendering:', this.app.currentScreen)
 
   }
@@ -125,12 +131,16 @@ class Screen {
       count: 15,
       value: +hour,
       onChange: (selected) => {
-        this.swapHour = +hour
+        this.tempTime = {
+          ...this.tempTime,
+          h: +hour
+        }
         if (selected.value != hour) {
-          this.alarmTime.h = selected.value
-          this.alarmTime.m = this.swapMin
-          this.alarmTime.isPM = this.swapSuffix
-          this.createAlarmTimeObject(this.alarmTime, is12Hour)
+          this.tempTime = {
+            ...this.tempTime,
+            h: selected.value
+          }
+          this.createAlarmTimeObject(this.tempTime, is12Hour)
         }
       }
     })
@@ -142,12 +152,16 @@ class Screen {
       count: 15,
       value: +min,
       onChange: (selected) => {
-        this.swapMin = +min
+        this.tempTime = {
+          ...this.tempTime,
+          m: +min
+        }
         if (selected.value != min) {
-          this.alarmTime.h = this.swapHour
-          this.alarmTime.m = selected.value
-          this.alarmTime.isPM = this.swapSuffix
-          this.createAlarmTimeObject(this.alarmTime, is12Hour)
+          this.tempTime = {
+            ...this.tempTime,
+            m: selected.value
+          }
+          this.createAlarmTimeObject(this.tempTime, is12Hour)
         }
       }
     })
@@ -161,12 +175,17 @@ class Screen {
         count: 15,
         value: suffixOriginalValue,
         onChange: (selected) => {
-          this.swapSuffix = suffixOriginalValue
+          console.log(selected.value);
+          this.tempTime = {
+            ...this.tempTime,
+            isPM: selected.value
+          }
           if (selected.value != suffixOriginalValue) {
-            this.alarmTime.h = this.swapHour
-            this.alarmTime.m = this.swapMin
-            this.alarmTime.isPM = selected.value
-            this.createAlarmTimeObject(this.alarmTime, is12Hour)
+            this.tempTime = {
+              ...this.tempTime,
+              isPM: selected.value
+            }
+            this.createAlarmTimeObject(this.tempTime, is12Hour)
           }
         }
       })

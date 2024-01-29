@@ -9,6 +9,7 @@ class UserRepository {
         password,
       },
       data: {
+        defaultRingtone: "https://prod-1.storage.jamendo.com/?trackid=169&format=mp31&from=W4rjxt66Lv%2FylC7ysLP0bA%3D%3D%7CKxK2oa%2FTBBnlaq8ti0wcWQ%3D%3D&#169",
         username,
         nome: nome || username,
         city,

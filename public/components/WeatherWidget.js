@@ -19,9 +19,8 @@ class WeatherWidget {
 
   updateWeatherData({ weather, user }) {
 
-    if (!weather | !user) {
-      console.log('failed race condition at weather')
-      setTimeout(() => { this.render() }, 1000)
+    if (this.app.isLoading) {
+      setTimeout(() => { this.render() }, 500)
       return
     }
 

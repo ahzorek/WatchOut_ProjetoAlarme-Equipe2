@@ -6,6 +6,7 @@ const users = [
       password: "lovelace456",
     },
     data: {
+      "defaultRingtone": "https://prod-1.storage.jamendo.com/?trackid=169&format=mp31&from=W4rjxt66Lv%2FylC7ysLP0bA%3D%3D%7CKxK2oa%2FTBBnlaq8ti0wcWQ%3D%3D&#169",
       username: "adalove",
       nome: "Ada Lovelace",
       city: 'London',
@@ -25,6 +26,7 @@ const users = [
       password: "cernwww404",
     },
     data: {
+      defaultRingtone: "https://prod-1.storage.jamendo.com/?trackid=169&format=mp31&from=W4rjxt66Lv%2FylC7ysLP0bA%3D%3D%7CKxK2oa%2FTBBnlaq8ti0wcWQ%3D%3D&#169",
       username: "tim",
       nome: "Tim Berners Lee",
       city: 'London',
@@ -44,6 +46,7 @@ const users = [
       "password": "carpediem"
     },
     "data": {
+      "defaultRingtone": "https://prod-1.storage.jamendo.com/?trackid=169&format=mp31&from=W4rjxt66Lv%2FylC7ysLP0bA%3D%3D%7CKxK2oa%2FTBBnlaq8ti0wcWQ%3D%3D&#169",
       "username": "bueller",
       "nome": "Ferris Bueller",
       "city": "Chicago",
@@ -63,6 +66,7 @@ const users = [
       "password": "quarterpound"
     },
     "data": {
+      "defaultRingtone": "https://prod-1.storage.jamendo.com/?trackid=169&format=mp31&from=W4rjxt66Lv%2FylC7ysLP0bA%3D%3D%7CKxK2oa%2FTBBnlaq8ti0wcWQ%3D%3D&#169",
       "username": "vinvega",
       "nome": "Vincent Vega",
       "city": "Los Angeles",
@@ -82,6 +86,7 @@ const users = [
       "password": "killbill"
     },
     "data": {
+      "defaultRingtone": "https://prod-1.storage.jamendo.com/?trackid=169&format=mp31&from=W4rjxt66Lv%2FylC7ysLP0bA%3D%3D%7CKxK2oa%2FTBBnlaq8ti0wcWQ%3D%3D&#169",
       "username": "mommy",
       "nome": "Beatrix Kiddo",
       "city": "Tokyo",

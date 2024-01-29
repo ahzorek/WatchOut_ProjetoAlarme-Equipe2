@@ -1,10 +1,10 @@
-<!DOCTYPE>
+<!DOCTYPE html>
 <html class="sunrise-theme">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>Criar Conta</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/animations.css">
 </head>
@@ -14,11 +14,31 @@
     <div class="screen active">
       <div class="login-container">
         <form>
-          <h1 class="title">Login</h1>
+          <h1 class="title">Criar Conta</h1>
+          <select name="title" id="treatmentTitle" required>
+            <option value="" disabled selected>Tratamento</option>
+          </select>
+          <input placeholder="Nome" type="text" id="nome" name="nome">
+          <input placeholder="Cidade" type="text" id="cityInput" name="city" list="cities">
+          <datalist id="cities"></datalist>
+          <!-- <select name="is12Hour" id="formatoRelogio" required>
+            <option disabled selected>Formato do Relógio</option>
+            <option value="true">12 Horas</option>
+            <option value="false">24 Horas</option>
+          </select>
+          <select name="unit" id="formatoTemperatura" required>
+            <option disabled selected>Unidade de Temperatura</option>
+            <option value="C">Celsius</option>
+            <option value="F">Fahrenheit</option>
+            <option value="K">Kelvin</option>
+          </select> -->
           <input autocapitalize="none" placeholder="Usuário" type="text" id="username" name="username" required>
-
           <input placeholder="Senha" type="password" id="password" name="password" required>
-
+          <input placeholder="Confirme a senha" type="password" id="password_confirm" name="password_confirm" required>
+          <div>
+            <input type="checkbox" name="agreement" id="agreement">
+            <label for="agreement">Li e concordo com o <a target="_blank" href="../terms">termos de uso</a>.</label>
+          </div>
           <button class="" type="submit">
             <div class="loading-spinner icon"></div>
             <div class="success-icon icon">
@@ -32,15 +52,62 @@
             </div>
             <span class="btn-text">Login</span>
           </button>
-          <h3>Não tem conta? <a href="../signup">Crie uma agora</a>.</h3>
+          <h3>Já tenho uma conta, <a href="../login">quero logar</a>.</h3>
         </form>
       </div>
     </div>
   </div>
-  <script>
+  <script type="module">
+    import treatmentTitle from '../data/treatmentTitles.db.js'
     const form = document.querySelector('form')
+    const treatmentSelect = form.querySelector('#treatmentTitle')
     const button = form.querySelector('button')
     const btnText = button.querySelector('span')
+    const cityInput = document.getElementById('cityInput')
+    const cityList = document.getElementById('cities')
+    let timeoutId
+
+    treatmentTitle.forEach(({ title, slug }) => {
+      const op = document.createElement('option')
+      op.value = title
+      op.textContent = title
+      op.id = slug
+      treatmentSelect.appendChild(op)
+    })
+
+    cityInput.addEventListener('input', function (event) {
+      clearTimeout(timeoutId)
+
+      timeoutId = setTimeout(async function () {
+        const inputText = event.target.value
+
+        if (inputText.length >= 3) {
+          try {
+            const { city } = await makeApiCall(inputText)
+
+            cityList.innerHTML = ''
+
+            const option = document.createElement('option')
+            option.innerText = city
+            option.value = city
+
+            cityList.appendChild(option)
+
+          } catch (error) {
+            console.error('Error fetching data:', error)
+          }
+        }
+      }, 300)
+    })
+
+    async function makeApiCall(query) {
+      const autoCompleteApi = '/autocomplete-city?str='
+      const response = await fetch(autoCompleteApi + query)
+      const data = await response.json()
+
+      console.log(data)
+      return data
+    }
 
     const credentials = {
       username: null,

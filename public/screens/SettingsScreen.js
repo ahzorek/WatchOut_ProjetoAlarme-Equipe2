@@ -74,6 +74,23 @@ class SettingsScreen extends Screen {
     }
   }
 
+  makeDevMode() {
+    if (this.taps < 7) {
+      this.taps++
+      console.log('tap tap, little tappy boy')
+    }
+    else if (!this.app.isDevMode && this.taps >= 7) {
+      this.taps = 0
+      this.app.isDevMode = true
+      this.app.devMode(true)
+    }
+    else if (this.app.isDevMode && this.taps >= 3) {
+      this.taps = 0
+      this.app.isDevMode = false
+      this.app.devMode()
+    }
+  }
+
   createStructure(user) {
     const structure = document.createElement("div")
     structure.classList.add('structure')
@@ -85,28 +102,14 @@ class SettingsScreen extends Screen {
     title.classList.add("title1")
     title.textContent = "Ajustes"
 
-    title.addEventListener('click', () => {
-      if (this.taps < 7) {
-        this.taps++
-        console.log('tap tap, little tappy boy')
-      }
-      else if (!this.app.isDevMode && this.taps >= 7) {
-        this.taps = 0
-        this.app.isDevMode = true
-        this.app.devMode(true)
-      }
-      else if (this.app.isDevMode && this.taps >= 3) {
-        this.taps = 0
-        this.app.isDevMode = false
-        this.app.devMode()
-      }
-    })
+    title.addEventListener('click', () => this.makeDevMode())
 
     const closeButton = document.createElement("button")
     closeButton.classList.add("nav-btn", "back-btn")
     closeButton.innerHTML = closeIcon
 
     closeButton.addEventListener('click', async () => {
+      closeButton.disabled = true
       this.stopSong()
       await this.exitScreen()
     }
@@ -149,6 +152,8 @@ class SettingsScreen extends Screen {
   }
 
   createSettingsItems(user) {
+    console.log('a porra do user é::::', user)
+    const [ringtone, songId] = user.defaultRingtone.split('&#')
     const elements = []
     const container = document.createElement('div')
 
@@ -300,16 +305,15 @@ class SettingsScreen extends Screen {
     const jamendoContainer = document.createElement('div');
     const jamendoTitle = document.createElement('h3');
     jamendoTitle.classList.add('title3');
-    jamendoTitle.textContent = 'Som';
+    jamendoTitle.textContent = 'Toque';
 
     jamendoContainer.appendChild(jamendoTitle);
 
     const jamendoSelect = document.createElement('select');
-    jamendoSelect.id = 'jamendoRingtone';
-    jamendoSelect.name = 'jamendoRingtone';
+    jamendoSelect.id = 'defaultRingtone';
+    jamendoSelect.name = 'defaultRingtone';
 
     const jamendoDefaultOption = document.createElement('option');
-    jamendoDefaultOption.selected = true;
     jamendoDefaultOption.disabled = true;
     jamendoDefaultOption.value = 'null';
     jamendoDefaultOption.textContent = 'Selecione';
@@ -317,22 +321,25 @@ class SettingsScreen extends Screen {
     jamendoSelect.appendChild(jamendoDefaultOption);
 
     // Fetch songs from the Jamendo API
+
     async function fetchJamendoTracks() {
       try {
         const jamendoResponse = await fetch('https://api.jamendo.com/v3.0/tracks/?client_id=1d583eeb');
         const jamendoData = await jamendoResponse.json();
 
+
         const jamendoSongs = jamendoData.results;
         jamendoSongs.forEach(song => {
           const jamendoOption = document.createElement('option');
-          jamendoOption.value = song.audio;
+          jamendoOption.selected = (songId == song.id) ? true : false;
+          jamendoOption.value = song.audio + '&#' + song.id
           jamendoOption.textContent = song.name;
           jamendoSelect.appendChild(jamendoOption);
         });
 
         // Add event listener to play the selected song
         jamendoSelect.addEventListener('change', () => {
-          const selectedSong = jamendoSelect.value;
+          const selectedSong = jamendoSelect.value.split('&#')[0]
           playSelectedSong(selectedSong);
         });
       } catch (error) {

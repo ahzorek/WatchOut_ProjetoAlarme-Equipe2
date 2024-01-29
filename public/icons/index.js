@@ -93,7 +93,7 @@ const repeatIcon = `
 // `
 
 const closeIcon = `
-<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
   <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
   <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
   <g id="SVGRepo_iconCarrier">
@@ -116,18 +116,7 @@ const closeIcon = `
 // `
 
 const saveIcon = `
-<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-  <g id="SVGRepo_iconCarrier">
-    <path
-      d="M16.44 8.8999C20.04 9.2099 21.51 11.0599 21.51 15.1099V15.2399C21.51 19.7099 19.72 21.4999 15.25 21.4999H8.73998C4.26998 21.4999 2.47998 19.7099 2.47998 15.2399V15.1099C2.47998 11.0899 3.92998 9.2399 7.46998 8.9099"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-    <path d="M12 2V14.88" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-    <path d="M15.35 12.6499L12 15.9999L8.65002 12.6499" stroke-width="1.5" stroke-linecap="round"
-      stroke-linejoin="round"></path>
-  </g>
-</svg>
+<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-save"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"></path> </g></svg>
 `
 
 // const closeIcon = `
