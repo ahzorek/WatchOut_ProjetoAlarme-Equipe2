@@ -44,18 +44,21 @@ class EditScreen extends Screen {
     closeButton.innerHTML = closeIcon
 
     closeButton.addEventListener('click', () => {
+      closeButton.disabled = true
       this.stopSong(); // Stop the song when the close icon is clicked
       this.app.goBack();
     });
-  
+
     const saveButton = document.createElement("button");
     saveButton.classList.add("nav-btn", "save-btn");
     saveButton.innerHTML = saveIcon;
-  
+
     saveButton.addEventListener('click', async () => {
-      this.stopSong(); // Stop the song when the save icon is clicked
-      await this.processSaveNewData();
-    });
+      saveButton.disabled = true
+      this.stopSong()
+      await this.processSaveNewData()
+      saveButton.disabled = false
+    })
 
     this.topSaveButton = saveButton
 
@@ -86,7 +89,7 @@ class EditScreen extends Screen {
     audioPlayer.currentTime = 0;
   }
 
-  createFields({ description, isActive, isRepeating, ringtone, days }) {
+  createFields({ description, isActive, isRepeating, jamendoRingtone, days }) {
     const elements = []
     const container = document.createElement('div')
 
@@ -143,7 +146,7 @@ class EditScreen extends Screen {
     const isActiveContainer = document.createElement('div')
     const isActiveTitle = document.createElement('h3')
     isActiveTitle.classList.add('title3')
-    isActiveTitle.textContent = 'Ativar'
+    isActiveTitle.textContent = 'Ativado'
 
     isActiveContainer.appendChild(isActiveTitle)
 
@@ -227,7 +230,7 @@ class EditScreen extends Screen {
     const jamendoContainer = document.createElement('div');
     const jamendoTitle = document.createElement('h3');
     jamendoTitle.classList.add('title3');
-    jamendoTitle.textContent = 'Som';
+    jamendoTitle.textContent = 'Toque';
 
     jamendoContainer.appendChild(jamendoTitle);
 
@@ -236,7 +239,6 @@ class EditScreen extends Screen {
     jamendoSelect.name = 'jamendoRingtone';
 
     const jamendoDefaultOption = document.createElement('option');
-    jamendoDefaultOption.selected = true;
     jamendoDefaultOption.disabled = true;
     jamendoDefaultOption.value = 'null';
     jamendoDefaultOption.textContent = 'Selecione';
@@ -244,48 +246,61 @@ class EditScreen extends Screen {
     jamendoSelect.appendChild(jamendoDefaultOption);
 
     // Fetch songs from the Jamendo API
-      async function fetchJamendoTracks() {
-        try {
-          const jamendoResponse = await fetch('https://api.jamendo.com/v3.0/tracks/?client_id=1d583eeb');
-          const jamendoData = await jamendoResponse.json();
+    async function fetchJamendoTracks() {
+      try {
+        const jamendoResponse = await fetch('https://api.jamendo.com/v3.0/tracks/?client_id=1d583eeb');
+        const jamendoData = await jamendoResponse.json();
 
-          const jamendoSongs = jamendoData.results;
-          jamendoSongs.forEach(song => {
-            const jamendoOption = document.createElement('option');
-            jamendoOption.value = song.audio;
-            jamendoOption.textContent = song.name;
-            jamendoSelect.appendChild(jamendoOption);
-          });
+        const [ringtone, songId] = jamendoRingtone.split('&#')
+        console.log('loaded ringtones are:;', jamendoData)
 
-          // Add event listener to play the selected song
-          jamendoSelect.addEventListener('change', () => {
-            const selectedSong = jamendoSelect.value;
-            playSelectedSong(selectedSong);
-          });
-        } catch (error) {
-          console.error('Error fetching Jamendo songs:', error);
-        }
+        const jamendoSongs = jamendoData.results;
+        jamendoSongs.forEach(song => {
+          // console.table(
+          //   {
+          //     savedId: jamendoSongId,
+          //     loaded_id: song.id,
+          //     savedringtone: jamendoRingtone,
+          //     loaded_url: song.audio,
+          //     compare: (jamendoRingtone == song.audio)
+          //   }
+          // )
+          const jamendoOption = document.createElement('option');
+          jamendoOption.selected = (songId == song.id) ? true : false;
+          jamendoOption.value = song.audio + '&#' + song.id
+          jamendoOption.textContent = song.name;
+          jamendoSelect.appendChild(jamendoOption);
+        });
+
+        // Add event listener to play the selected song
+        jamendoSelect.addEventListener('change', () => {
+          const selectedSong = jamendoSelect.value.split('&#')[0]
+          playSelectedSong(selectedSong);
+        });
+      } catch (error) {
+        console.error('Error fetching Jamendo songs:', error);
       }
+    }
 
-      // Function to play the selected song
-      function playSelectedSong(songUrl) {
-        // Use the songUrl to play the audio, for example, using an audio element
-        const audioPlayer = document.getElementById('audioPlayer');
-        audioPlayer.src = songUrl;
-        audioPlayer.play();
+    // Function to play the selected song
+    function playSelectedSong(songUrl) {
+      // Use the songUrl to play the audio, for example, using an audio element
+      const audioPlayer = document.getElementById('audioPlayer');
+      audioPlayer.src = songUrl;
+      audioPlayer.play();
 
-        setTimeout(() => {
-          audioPlayer.pause();
-          audioPlayer.currentTime = 0;
-        }, 5000);
-        
-      }
+      setTimeout(() => {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+      }, 5000);
 
-      // Call the function to fetch Jamendo tracks
-      fetchJamendoTracks();
+    }
 
-      jamendoContainer.appendChild(jamendoSelect);
-      elements.push(jamendoContainer);
+    // Call the function to fetch Jamendo tracks
+    fetchJamendoTracks();
+
+    jamendoContainer.appendChild(jamendoSelect);
+    elements.push(jamendoContainer);
 
     // const submitBtn = document.createElement('button')
     // submitBtn.type = 'button'
@@ -367,14 +382,19 @@ class EditScreen extends Screen {
       value = e.target.value.trim()
       this.editing = { ...this.editing, [key]: value }
     }
+    else if (e.target.type === 'select-one') {
+      console.log('target é um', e.target.getAttribute('data-song_id'))
+      value = e.target.value
+      this.editing = { ...this.editing, [key]: value }
+    }
     else {
       value = (isBool == 'true') ? e.target.value == 'true' : e.target.value
       this.editing = { ...this.editing, [key]: value }
     }
-    console.log(this.editing)
   }
 
   createAlarmTimeObject({ h, m, isPM }, is12Hour) {
+
     if (!this.hasEdited) this.setVisibilityToSaveButton()
     const hour = is12Hour ? convertTimeFrom12Hour(h, isPM) : h
     this.editing.alarmTime = formatTimeToString(hour, m)

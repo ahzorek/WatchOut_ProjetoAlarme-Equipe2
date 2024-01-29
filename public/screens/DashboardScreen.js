@@ -1,5 +1,5 @@
-import DateTimeWidget from "../widgets/DateTimeWidget.js"
-import WeatherWidget from "../widgets/WeatherWidget.js"
+import DateTimeWidget from "../components/DateTimeWidget.js"
+import WeatherWidget from "../components/WeatherWidget.js"
 import Screen from './Screen.js'
 
 class DashboardScreen extends Screen {
@@ -13,13 +13,21 @@ class DashboardScreen extends Screen {
     this.dateTimeWidget = new DateTimeWidget(this.app)
   }
 
-  render() {
+  refresh() {
+    if (this.weatherWidget && typeof this.weatherWidget.refresh === 'function') {
+      this.weatherWidget.refresh()
+      this.dateTimeWidget.refresh()
+    }
+  }
 
-    if (this.loading) {
+  render() {
+    if (this.app.isLoading) {
       this.container.innerHTML = `
         <div class="loading-spinner"></div>
       `
-    } else {
+      this.loadData()
+    }
+    else {
       this.container.innerHTML = ''
       this.container.appendChild(this.weatherWidget.render())
       this.container.appendChild(this.dateTimeWidget.render())
@@ -28,13 +36,9 @@ class DashboardScreen extends Screen {
   }
 
   loadData() {
-    this.weatherWidget.refresh()
-    // this.dateTimeWidget.refresh()
-
     setTimeout(() => {
-      this.loading = false
-
       this.render()
+      this.loading = false
     }, 500)
   }
 

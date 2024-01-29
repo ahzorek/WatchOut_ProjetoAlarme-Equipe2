@@ -40,7 +40,7 @@ class CreateScreen extends Screen {
     this.render()
   }
 
-  createStructure(alarm) {
+  createStructure(user) {
     const structure = document.createElement("div")
     structure.classList.add('frame')
 
@@ -56,9 +56,10 @@ class CreateScreen extends Screen {
     closeButton.innerHTML = closeIcon
 
     closeButton.addEventListener('click', () => {
+      closeButton.disabled = true
       this.creating = emptyCreatingObject
       this.app.goBack()
-      this.stopSong(); 
+      this.stopSong();
     })
 
     const saveButton = document.createElement("button")
@@ -66,12 +67,14 @@ class CreateScreen extends Screen {
     saveButton.innerHTML = saveIcon
 
     saveButton.addEventListener('click', async () => {
-      this.stopSong(); 
+      saveButton.disabled = true
+      this.stopSong();
       await this.processSaveNewData()
+      saveButton.disabled = false
     })
 
-  
-  
+
+
     this.topSaveButton = saveButton
 
     header.appendChild(title)
@@ -83,7 +86,7 @@ class CreateScreen extends Screen {
     const form = document.createElement("form")
     form.classList.add("settings-form")
 
-    const settingsItems = this.createFields(alarm)
+    const settingsItems = this.createFields(user)
     settingsItems.classList.add("settings-items")
 
     form.appendChild(settingsItems)
@@ -143,7 +146,7 @@ class CreateScreen extends Screen {
     console.log('sending:', data)
   }
 
-  createFields() {
+  createFields(user) {
     const elements = []
     const container = document.createElement('div')
 
@@ -200,7 +203,7 @@ class CreateScreen extends Screen {
     const isActiveContainer = document.createElement('div')
     const isActiveTitle = document.createElement('h3')
     isActiveTitle.classList.add('title3')
-    isActiveTitle.textContent = 'Ativar'
+    isActiveTitle.textContent = 'Ativado'
 
     isActiveContainer.appendChild(isActiveTitle)
 
@@ -284,7 +287,7 @@ class CreateScreen extends Screen {
     const jamendoContainer = document.createElement('div');
     const jamendoTitle = document.createElement('h3');
     jamendoTitle.classList.add('title3');
-    jamendoTitle.textContent = 'Som';
+    jamendoTitle.textContent = 'Toque';
 
     jamendoContainer.appendChild(jamendoTitle);
 
@@ -301,49 +304,52 @@ class CreateScreen extends Screen {
     jamendoSelect.appendChild(jamendoDefaultOption);
 
     // Fetch songs from the Jamendo API
-      async function fetchJamendoTracks() {
-        try {
-          const jamendoResponse = await fetch('https://api.jamendo.com/v3.0/tracks/?client_id=1d583eeb');
-          const jamendoData = await jamendoResponse.json();
+    async function fetchJamendoTracks() {
+      try {
+        const jamendoResponse = await fetch('https://api.jamendo.com/v3.0/tracks/?client_id=1d583eeb');
+        const jamendoData = await jamendoResponse.json();
 
-          const jamendoSongs = jamendoData.results;
-          jamendoSongs.forEach(song => {
-            const jamendoOption = document.createElement('option');
-            jamendoOption.value = song.audio;
-            jamendoOption.textContent = song.name;
-            jamendoSelect.appendChild(jamendoOption);
-          });
+        const [ringtone, songId] = user.defaultRingtone.split('&#')
 
-          // Add event listener to play the selected song
-          jamendoSelect.addEventListener('change', () => {
-            const selectedSong = jamendoSelect.value;
-            playSelectedSong(selectedSong);
-          });
-        } catch (error) {
-          console.error('Error fetching Jamendo songs:', error);
-        }
+        const jamendoSongs = jamendoData.results;
+        jamendoSongs.forEach(song => {
+          const jamendoOption = document.createElement('option');
+          jamendoOption.selected = (songId == song.id) ? true : false;
+          jamendoOption.value = song.audio + '&#' + song.id
+          jamendoOption.textContent = song.name;
+          jamendoSelect.appendChild(jamendoOption);
+        });
+
+        // Add event listener to play the selected song
+        jamendoSelect.addEventListener('change', () => {
+          const selectedSong = jamendoSelect.value.split('&#')[0]
+          playSelectedSong(selectedSong);
+        });
+      } catch (error) {
+        console.error('Error fetching Jamendo songs:', error);
       }
+    }
 
-      // Function to play the selected song
-      function playSelectedSong(songUrl) {
-        // Use the songUrl to play the audio, for example, using an audio element
-        const audioPlayer = document.getElementById('audioPlayer');
-        audioPlayer.src = songUrl;
-        audioPlayer.currentTime = 20;
-        audioPlayer.play();
+    // Function to play the selected song
+    function playSelectedSong(songUrl) {
+      // Use the songUrl to play the audio, for example, using an audio element
+      const audioPlayer = document.getElementById('audioPlayer');
+      audioPlayer.src = songUrl;
+      audioPlayer.currentTime = 20;
+      audioPlayer.play();
 
-        setTimeout(() => {
-          audioPlayer.pause();
-          audioPlayer.currentTime = 0;
-        }, 5000);
-        
-      }
+      setTimeout(() => {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+      }, 5000);
 
-      // Call the function to fetch Jamendo tracks
-      fetchJamendoTracks();
+    }
 
-      jamendoContainer.appendChild(jamendoSelect);
-      elements.push(jamendoContainer);
+    // Call the function to fetch Jamendo tracks
+    fetchJamendoTracks();
+
+    jamendoContainer.appendChild(jamendoSelect);
+    elements.push(jamendoContainer);
 
 
     // const submitBtn = document.createElement('button')
@@ -361,9 +367,9 @@ class CreateScreen extends Screen {
         input.addEventListener('keyup', (e) => this.handleInputChanges(e))
       } else
         el.addEventListener('change', (e) => this.handleInputChanges(e))
-    })
 
-    elements.forEach(el => container.appendChild(el))
+      container.appendChild(el)
+    })
 
     return container
 
@@ -374,18 +380,18 @@ class CreateScreen extends Screen {
       // Update the ringtone field with the selected song name
       const selectedSong = document.getElementById('jamendoRingtone');
       this.creating.ringtone = selectedSong.options[selectedSong.selectedIndex].textContent;
-  
+
       await this.createNewAlarm(
         this.app.userId,
         this.creating
       )
-  
+
       setTimeout(() => { this.app.goBack() }, 400);
     } else {
       console.log('Inconsistency detected, no data was sent');
     }
   }
-  
+
 
   async createNewAlarm(userId, newAlarm) {
     try {
@@ -450,7 +456,7 @@ class CreateScreen extends Screen {
     } else {
       this.container.innerHTML = ``
       this.container.appendChild(
-        this.createStructure(this.alarm)
+        this.createStructure(this.app.state.user)
       )
 
       this.createIosSelectors('12:00:00', this.app.state.user.is12Hour)
@@ -469,10 +475,9 @@ class CreateScreen extends Screen {
     }
     this.structure = this.createStructure()
 
-    setTimeout(() => {
-      this.loading = false
-      this.render()
-    }, 500)
+    this.loading = false
+    this.render()
+
   }
 }
 

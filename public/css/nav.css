@@ -8,24 +8,38 @@
 }
 
 .nav-btn svg {
-  width: 1.4rem;
+  width: 1.2rem;
+}
+
+.nav-btn {
+  cursor: pointer;
+  color: white;
+  transition: all 200ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  &:active {
+    scale: .95;
+  }
 }
 
 .back-btn {
-  background-color: rgb(103 103 113 / 34%);
-  fill: white;
-  stroke: white;
+  background-color: rgb(103 103 113 / 25%);
+  &:hover {
+    background-color: rgb(103 103 113 / 45%);
+  }
 }
 
 .save-btn {
   margin-inline-start: auto;
-  background-color: rgb(19 72 49 / 90%);
-  fill: none;
-  stroke: white;
+  background-color: rgba(25, 145, 93, 0.3);
   scale: 0;
-  transition: scale 200ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
-
+  /* transition: scale 200ms cubic-bezier(0.455, 0.03, 0.515, 0.955); */
+  
   &.active {
     scale: 1;
+    &:active {
+      scale: .95;
+    }
+    &:hover {
+      background-color: rgba(25, 145, 93, 0.5);
+    }
   }
 }

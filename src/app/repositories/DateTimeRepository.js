@@ -32,18 +32,19 @@ function formatTwoDigits(num) {
 }
 
 function getHoje(req) {
-  const languages = req.headers["accept-language"]
-  const preferedLanguage = languages ? languages.split(',')[0] : 'pt-BR'
+  const preferedLanguage = 'pt-BR'
   const now = new Date()
 
   const formattedDate = new Intl.DateTimeFormat(preferedLanguage, {
     weekday: "short",
     year: "numeric",
-    month: "short",
+    month: "long",
     day: "numeric",
   }).format(now)
 
-  return formattedDate
+  const [dayOfWeek, restOfDate] = formattedDate.split('.,')
+
+  return `${dayOfWeek},${restOfDate}`
 }
 
 function getMensagem(userId = false) {
