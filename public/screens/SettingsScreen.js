@@ -1,5 +1,4 @@
 import Screen from './Screen.js'
-import rigntonesList from '../data/ringtones.db.js'
 import treatmentTitles from '../data/treatmentTitles.db.js'
 
 import createSegmentedPicker from '../utils/createSegmentedPicker.js'
@@ -107,7 +106,11 @@ class SettingsScreen extends Screen {
     closeButton.classList.add("nav-btn", "back-btn")
     closeButton.innerHTML = closeIcon
 
-    closeButton.addEventListener('click', async () => await this.exitScreen())
+    closeButton.addEventListener('click', async () => {
+      this.stopSong()
+      await this.exitScreen()
+    }
+    )
 
 
     header.appendChild(title)
@@ -122,7 +125,10 @@ class SettingsScreen extends Screen {
     const logoutButton = document.createElement("button")
     logoutButton.innerText = 'Logout'
 
-    logoutButton.addEventListener('click', () => this.userLogout())
+    logoutButton.addEventListener('click', () => {
+      this.stopSong(); // Stop the song when the logout button is clicked
+      this.userLogout(); // Add your logout logic here
+    });
 
     form.appendChild(settingsItems)
     form.appendChild(logoutButton)
@@ -133,6 +139,13 @@ class SettingsScreen extends Screen {
     structure.appendChild(form)
 
     return structure
+  }
+
+  stopSong() {
+    // Add logic to stop the song here
+    const audioPlayer = document.getElementById('audioPlayer');
+    audioPlayer.pause();
+    audioPlayer.currentTime = 0;
   }
 
   createSettingsItems(user) {
@@ -283,38 +296,70 @@ class SettingsScreen extends Screen {
     useNeutralThemeContainer.appendChild(useNeutralThemePicker)
     elements.push(useNeutralThemeContainer)
 
-    //ringtone
-    const ringtoneContainer = document.createElement('div')
-    const ringtoneTitle = document.createElement('h3')
-    ringtoneTitle.classList.add('title3')
-    ringtoneTitle.textContent = 'Toque Padrão'
+    //ringtone Jamento API
+    const jamendoContainer = document.createElement('div');
+    const jamendoTitle = document.createElement('h3');
+    jamendoTitle.classList.add('title3');
+    jamendoTitle.textContent = 'Som';
 
-    ringtoneContainer.appendChild(ringtoneTitle)
+    jamendoContainer.appendChild(jamendoTitle);
 
-    const ringtoneSelect = document.createElement('select')
-    ringtoneSelect.id = 'defaultRingtone'
-    ringtoneSelect.name = 'defaultRingtone'
+    const jamendoSelect = document.createElement('select');
+    jamendoSelect.id = 'jamendoRingtone';
+    jamendoSelect.name = 'jamendoRingtone';
 
-    const defaultOption = document.createElement('option')
-    defaultOption.selected = true | false
-    defaultOption.disabled = true
-    defaultOption.value = 'null'
-    defaultOption.textContent = 'Selecione'
+    const jamendoDefaultOption = document.createElement('option');
+    jamendoDefaultOption.selected = true;
+    jamendoDefaultOption.disabled = true;
+    jamendoDefaultOption.value = 'null';
+    jamendoDefaultOption.textContent = 'Selecione';
 
-    ringtoneSelect.appendChild(defaultOption)
+    jamendoSelect.appendChild(jamendoDefaultOption);
 
-    rigntonesList.forEach(({ slug, title }) => {
-      const option = document.createElement('option')
-      option.value = slug
-      option.textContent = title
-      option.selected = (slug === this.app.state.user.defaultRingtone)
+    // Fetch songs from the Jamendo API
+    async function fetchJamendoTracks() {
+      try {
+        const jamendoResponse = await fetch('https://api.jamendo.com/v3.0/tracks/?client_id=1d583eeb');
+        const jamendoData = await jamendoResponse.json();
 
-      ringtoneSelect.appendChild(option)
-    })
+        const jamendoSongs = jamendoData.results;
+        jamendoSongs.forEach(song => {
+          const jamendoOption = document.createElement('option');
+          jamendoOption.value = song.audio;
+          jamendoOption.textContent = song.name;
+          jamendoSelect.appendChild(jamendoOption);
+        });
 
-    ringtoneContainer.appendChild(ringtoneSelect)
+        // Add event listener to play the selected song
+        jamendoSelect.addEventListener('change', () => {
+          const selectedSong = jamendoSelect.value;
+          playSelectedSong(selectedSong);
+        });
+      } catch (error) {
+        console.error('Error fetching Jamendo songs:', error);
+      }
+    }
 
-    elements.push(ringtoneContainer)
+    // Function to play the selected song
+    function playSelectedSong(songUrl) {
+      // Use the songUrl to play the audio, for example, using an audio element
+      const audioPlayer = document.getElementById('audioPlayer');
+      audioPlayer.src = songUrl;
+      audioPlayer.play();
+
+      setTimeout(() => {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+      }, 5000);
+
+    }
+
+    // Call the function to fetch Jamendo tracks
+    fetchJamendoTracks();
+
+    jamendoContainer.appendChild(jamendoSelect);
+    elements.push(jamendoContainer);
+
 
     elements.forEach(el => {
       const input = el.querySelector('input')
